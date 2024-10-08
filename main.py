@@ -1,5 +1,3 @@
 from nicegui import ui
+import database
 
-ui.label('Hello NiceGUI!')
-
-ui.run()
