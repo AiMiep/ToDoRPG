@@ -68,5 +68,3 @@ def create_user():
     print(f"Geschlecht: {gender}")
 
 create_user()
-
-# Kommentar
