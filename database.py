@@ -19,7 +19,7 @@ def createTables():
              CREATE TABLE tasks (
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
                  description TEXT,
-                 status TEXT
+                 status TEXT,
                  deadline DATE
              )
          ''')
