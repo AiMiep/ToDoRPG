@@ -10,7 +10,7 @@ def createTables():
     # Erstellen der Tabelle, falls sie noch nicht existiert
     database.execute('''
     CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         age INTEGER NOT NULL,
         gender TEXT NOT NULL
