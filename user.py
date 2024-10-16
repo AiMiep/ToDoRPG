@@ -1,70 +1,56 @@
 import sqlite3
 
+# User Klasse
+class User:
+    def __init__(self, name: str, age: int, gender: str):
+        # Überprüfen ob das Geschlecht korrekt ist
+        if gender not in ['Männlich', 'Weiblich', 'Divers']:
+            raise ValueError("Geschlecht muss 'Männlich', 'Weiblich' oder 'Divers' sein")
+
+        self.name = name
+        self.age = age
+        self.gender = gender
+
+    def create_user(self):
+        connection = connect_database()
+        cursor = connection.cursor()
+
+        # User in die Datenbank einfügen
+        cursor.execute('''
+        INSERT INTO users (name, age, gender) VALUES (?, ?, ?)
+        ''', (self.name, self.age, self.gender))
+
+        connection.commit()
+        connection.close()
+        print(f"User {self.name} erfolgreich angelegt.")
+
+    # Methode zum Löschen eines Nutzers aus der Datenbank
+    def delete_user(self, user_id: int):
+        connection = connect_database()
+        cursor = connection.cursor()
+
+        # User aus der Datenbank löschen
+        cursor.execute('''
+        DELETE FROM users WHERE id = ?
+        ''', (user_id,))
+
+        connection.commit()
+        connection.close()
+        print(f"User mit ID {user_id} erfolgreich gelöscht.")
+
 # Verbindung zur Datenbank herstellen
 def connect_database():
     database = sqlite3.connect('taskify.db')
     return database
 
-# Funktion zum Benutzer hinzufügen
-def add_user_to_database(username, age, gender):
-    database = connect_database()
-    cursor = database.cursor()
 
-    cursor.execute('''
-    INSERT INTO users (username, age, gender) VALUES (?, ?, ?)
-    ''', (username, age, gender))
+# Beispiel für die Verwendung
+if __name__ == "__main__":
+    # Erstellen eines User-Objekts
+    user = User(name="Max Mustermann", age=30, gender="Männlich")
 
-    print(f"Füge folgenden Benutzer in die Datenbank ein: {username}, {age}, {gender}")
+    # User anlegen
+    user.create_user()
 
-    database.commit()
-    database.close()
-
-# Funktion zum Eingeben eines Usernames
-def enter_username():
-    username = input("Gebe bitte jetzt einen Benutzernamen ein :) : ")
-    return username
-
-
-# Funktion zum Eingeben des Alters
-def enter_age():
-    while True:
-        try:
-            age = int(input("Wie alt bist du ? : "))
-            if age > 0:
-                return age
-            else:
-                print("Dein Alter kann nicht im negativen Bereich liegen >:( ")
-        except ValueError:
-            print("Bitte gebe dein richtiges Alter an - Danke.")
-
-
-# Funktion zum Auswählen des Geschlechts
-def select_gender():
-    gender_options = {"1": "Männlich", "2": "Weiblich", "3": "Divers"}
-    while True:
-        print("Zu welchem Geschlecht gehörst du - wähle aus:")
-        for key, value in gender_options.items():
-            print(f"{key}: {value}")
-
-        choice = input("Du bist also (1/2/3): ")
-        if choice in gender_options:
-            return gender_options[choice]
-        else:
-            print("Ungültige Auswahl. Bitte wählen Sie 1, 2 oder 3.")
-
-
-# Funktion, um alle Informationen zusammenzuführen
-def create_user():
-    print("Erstellen Sie einen neuen Benutzer.")
-    username = enter_username()
-    age = enter_age()
-    gender = select_gender()
-
-    add_user_to_database(username, age, gender)
-
-    print("\nBenutzer erstellt - vielen Dank :) :")
-    print(f"Benutzername: {username}")
-    print(f"Alter: {age}")
-    print(f"Geschlecht: {gender}")
-
-create_user()
+    # User löschen (Beispiel: User mit ID 1 löschen)
+    user.delete_user(1)
