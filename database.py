@@ -1,30 +1,35 @@
 import sqlite3
 
-def connectDatabase():
+# Verbindung zur Datenbank aufbauen
+def get_database_cursor():
     database = sqlite3.connect('taskify.db')
-    return database
+    cursor = database.cursor()
+    return database, cursor
 
-def createTables():
-    database = connectDatabase()
-
-    # Erstellen der Tabelle, falls sie noch nicht existiert
-    database.execute('''
-    CREATE TABLE IF NOT EXISTS users (
-        email TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        age INTEGER NOT NULL,
-        gender TEXT NOT NULL
-    )
-    ''')
-
-    database.execute('''
-             CREATE TABLE IF NOT EXISTS tasks (
-                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                 description TEXT,
-                 status TEXT,
-                 deadline DATE
-             )
-         ''')
-
+# Datenbank speichern und schließen
+def commit_and_close(database):
     database.commit()
     database.close()
+
+def create_table():
+    database, cursor = get_database_cursor()
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            email TEXT PRIMARY KEY,
+            username TEXT,
+            age INT,
+            gender TEXT
+        )
+    ''')
+
+    cursor.execute(''' 
+        CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            description TEXT,
+            status TEXT,
+            deadline TEXT
+        )
+    ''')
+
+    commit_and_close(database)

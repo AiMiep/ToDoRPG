@@ -1,11 +1,9 @@
-from nicegui import ui
-import database # Importiert die Funktionen aus database.py
-from user import User # Improtiert die User Klasse aus der user.py
+from database import create_table
+from utils import task_manager
 
 def main():
-  # Datenbankverbindung und Tabelleninitialisierung
-  database.connectDatabase()
-  database.createTables()
+    create_table()
+    task_manager()
 
   # Erstellen eines User-Objekts mit den gewünschten Attributen
   user1 = User(name="Max Mustermann", age=30, gender="Männlich")
@@ -17,5 +15,4 @@ def main():
   # Beispiel: Lösche den Benutzer mit ID 1
   user1.delete_user(1)
 
-if __name__ == "__main__":
-  main()
+main()
