@@ -16,14 +16,14 @@ def create_table():
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT PRIMARY KEY,
             username TEXT,
             age INT,
             gender TEXT
         )
     ''')
 
-    database.execute(''' 
+    cursor.execute(''' 
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             description TEXT,
