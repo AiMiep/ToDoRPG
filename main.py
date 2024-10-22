@@ -1,8 +1,8 @@
-from nicegui import ui
-import database
+from database import create_table
+from utils import task_manager
 
 def main():
-  database.connectDatabase()
-  database.createTables()
+    create_table()
+    task_manager()
 
 main()
