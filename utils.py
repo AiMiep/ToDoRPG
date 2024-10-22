@@ -24,7 +24,7 @@ def show_task_options():
     print("6. Beenden")
 
 def task_manager():
-    createTables()
+    create_table()
     while True:
         show_task_options()
         try:
