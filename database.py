@@ -19,7 +19,8 @@ def create_table():
             email TEXT PRIMARY KEY,
             username TEXT,
             age INT,
-            gender TEXT
+            gender TEXT,
+            password TEXT
         )
     ''')
 
@@ -28,7 +29,9 @@ def create_table():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             description TEXT,
             status TEXT,
-            deadline TEXT
+            deadline TEXT,
+            user_email TEXT,
+            FOREIGN KEY (user_email) REFERENCES users(email)
         )
     ''')
 

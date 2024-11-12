@@ -1,24 +1,21 @@
-import sqlite3
 from database import get_database_cursor, commit_and_close
 
 # Neue Aufgabe erstellen
-def create_new_task(description, deadline):
+def create_new_task(description, deadline, user_email):
     database, cursor = get_database_cursor()
     status = 'Erstellt'
-    cursor.execute(f'''
-          INSERT INTO tasks (description, status, deadline)
-          VALUES ('{description}', '{status}', '{deadline}')
-      ''')
+    cursor.execute('''
+          INSERT INTO tasks (description, status, deadline, user_email)
+          VALUES (?, ?, ?, ?)
+      ''', (description, status, deadline, user_email))
 
     commit_and_close(database)
     print(f"Aufgabe '{description}' erfolgreich erstellt.")
 
-
 # Alle Aufgaben anzeigen
-def list_all_tasks():
+def list_all_tasks(user_email):
     database, cursor = get_database_cursor()
-
-    cursor.execute('SELECT * FROM tasks')
+    cursor.execute('SELECT * FROM tasks WHERE user_email = ?', (user_email,))
     tasks = cursor.fetchall()
 
     if tasks:
@@ -29,33 +26,29 @@ def list_all_tasks():
     else:
         print("Keine Aufgaben vorhanden.")
 
-
 # Status einer Aufgabe aktualisieren
-def update_task_status(task_id, new_status):
+def update_task_status(task_id, new_status, user_email):
     database, cursor = get_database_cursor()
-
-    cursor.execute(f'''
+    cursor.execute('''
         UPDATE tasks
-        SET status = '{new_status}'
-        WHERE id = '{task_id}'
-    ''')
+        SET status = ?
+        WHERE id = ? AND user_email = ?
+    ''', (new_status, task_id, user_email))
 
     commit_and_close(database)
     print(f"Aufgabe ID {task_id} erfolgreich auf '{new_status}' aktualisiert.")
 
-
 # Aufgabe löschen
-def delete_task(task_id):
+def delete_task(task_id, user_email):
     database, cursor = get_database_cursor()
-
-    cursor.execute(f'DELETE FROM tasks WHERE id = {task_id}')
+    cursor.execute('DELETE FROM tasks WHERE id = ? AND user_email = ?', (task_id, user_email))
     commit_and_close(database)
     print(f"Aufgabe ID {task_id} erfolgreich gelöscht.")
 
-
-def delete_all_tasks():
+def delete_all_tasks(user_email):
     database, cursor = get_database_cursor()
-    cursor.execute('DELETE FROM tasks')
+    cursor.execute('DELETE FROM tasks WHERE user_email = ?', (user_email,))
     cursor.execute('DELETE FROM sqlite_sequence WHERE name="tasks";')  # ID zurücksetzen
     commit_and_close(database)
     print("Alle Aufgaben wurden erfolgreich gelöscht.")
+
