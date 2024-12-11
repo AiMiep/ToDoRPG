@@ -1,42 +1,26 @@
 from database import get_database_cursor, commit_and_close
-import sqlite3
 
 # Neuer User erstellen
-def create_new_user(email, name, age, gender, password):
+def create_new_user(username):
     database, cursor = get_database_cursor()
 
-    try:
-        cursor.execute('''
-            INSERT INTO users (email, username, age, gender, password)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (email, name, age, gender, password))
+    cursor.execute('SELECT COUNT(*) FROM users')
 
-        commit_and_close(database)
-        print(f"Benutzer '{name}' erfolgreich registriert.")
-    except sqlite3.IntegrityError:
-        print("Ein Benutzer mit dieser E-Mail-Adresse existiert bereits.")
+    cursor.execute(''' 
+        INSERT INTO users (username) 
+        VALUES (?)
+    ''', (username,))
 
-# Alle User anzeigen
-def list_all_user():
-    database, cursor = get_database_cursor()
-
-    cursor.execute('SELECT * FROM users')
-    users = cursor.fetchall()
-
-    if users:
-        print(f"{'ID':<5} | {'E-Mail':<20} | {'Name':<10} | {'Alter':<10} | {'Geschlecht':<10}")
-        print("-" * 60)
-        for user in users:
-            print(f"{user[0]:<5} | {user[1]:<20} | {user[2]:<10} | {user[3]:<10}")
-    else:
-        print("Keine User vorhanden.")
-
-# User löschen
-def delete_user(email):
-    database, cursor = get_database_cursor()
-
-    cursor.execute('DELETE FROM users WHERE email = ?', (email,))
     commit_and_close(database)
+    print(f"Benutzer '{username}' erfolgreich erstellt.")
 
-    print(f"User mit E-Mail: {email} erfolgreich gelöscht.")
+def check_if_user_exists():
+    database, cursor = get_database_cursor()
+    cursor.execute('SELECT COUNT(*) FROM users')
+    result = cursor.fetchone()
 
+    if result[0] == 0:
+        username = input("Gebe bitte einen Benutzernamen ein: ")
+        create_new_user(username)
+    else:
+        print("User bereits erstellt.")

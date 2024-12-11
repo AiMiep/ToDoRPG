@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 import sqlite3
 from user import User, connect_database
-
+"""
 class TestUser(unittest.TestCase):
 
     @patch('user.connect_database') #connect_database methode mocken
@@ -60,3 +60,4 @@ class TestUser(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+"""

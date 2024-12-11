@@ -14,24 +14,22 @@ def commit_and_close(database):
 def create_table():
     database, cursor = get_database_cursor()
 
-    cursor.execute('''
+    cursor.execute(''' 
         CREATE TABLE IF NOT EXISTS users (
-            email TEXT PRIMARY KEY,
-            username TEXT,
-            age INT,
-            gender TEXT,
-            password TEXT
+            users_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE
         )
     ''')
 
     cursor.execute(''' 
         CREATE TABLE IF NOT EXISTS tasks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            task_id INTEGER PRIMARY KEY AUTOINCREMENT,
             description TEXT,
             status TEXT,
+            date TEXT,
             deadline TEXT,
-            user_email TEXT,
-            FOREIGN KEY (user_email) REFERENCES users(email)
+            user_id INTEGER,
+            FOREIGN KEY (user_id) REFERENCES users(users_id)
         )
     ''')
 
