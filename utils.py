@@ -1,6 +1,7 @@
 from datetime import datetime
-from tasks import create_new_task, list_all_tasks
 
+from ToDoRPG.tasks import list_finished_tasks
+from tasks import create_new_task, list_all_tasks, delete_task, delete_all_tasks, update_task_status, list_all_open_tasks, list_finished_tasks
 user_id = 1
 
 def get_valid_date():
@@ -9,7 +10,7 @@ def get_valid_date():
         try:
             date_obj = datetime.strptime(deadline, "%d.%m.%Y").date()
             if date_obj < datetime.now().date():
-                print("Datum liegt in der Vergangenheit.")
+                print("Datum in der Vergangenheit.")
                 continue
             return date_obj
         except ValueError:
@@ -17,26 +18,45 @@ def get_valid_date():
 
 def show_task_options():
     print("\nTask-Manager")
-    print("1. Aufgabe erstellen")
-    print("2. Aufgaben anzeigen")
-    print("3. Beenden")
+    print("1. Hinzufügen neue Aufgabe")
+    print("2. Änderung Status")
+    print("3. Anzeige - Offene Aufgaben")
+    print("4. Anzeige - Alle Aufgaben")
+    print("5. Anzeige - Abgeschlossene Aufgaben")
+    print("6. Löschung einer Aufgabe")
+    print("7. Löschung aller Aufgaben")
+    print("8. Beenden")
 
 def task_manager():
     while True:
         show_task_options()
-        option = input("Wähle eine Option (1-3): ")
+        option = input("Wähle eine Option (1-6): ")
 
         if option == '1':
-            description = input("Beschreibung: ")
-            deadline = get_valid_date()
-            create_new_task(user_id, description, deadline)
+            create_new_task(user_id)
 
         elif option == '2':
-            list_all_tasks(user_id)
+            list_all_open_tasks(user_id)
+            update_task_status(user_id)
 
         elif option == '3':
+            list_all_open_tasks(user_id)
+
+        elif option == '4':
+            list_all_tasks(user_id)
+
+        elif option == '5':
+            list_finished_tasks(user_id)
+
+        elif option == '6':
+            delete_task(user_id)
+
+        elif option == '7':
+            delete_all_tasks()
+
+        elif option == '8':
             print("Task-Manager beendet.")
             break
 
         else:
-            print("Ungültige Eingabe. Bitte versuche es erneut.")
+            print("Ungültige Eingabe.")

@@ -24,6 +24,7 @@ def create_table():
     cursor.execute(''' 
         CREATE TABLE IF NOT EXISTS tasks (
             task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            difficulty TEXT,
             description TEXT,
             status TEXT,
             date TEXT,
