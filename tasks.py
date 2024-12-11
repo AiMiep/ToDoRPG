@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 from database import get_database_cursor, commit_and_close
 import utils
 
@@ -6,14 +6,12 @@ def create_new_task(user_id):
     description = input("Beschreibung: ")
     deadline = utils.get_valid_date()
 
-    # Schwierigkeitsstufe auswählen
     print("Schwierigkeitsstufen:")
     print("1. leicht")
     print("2. mittel")
     print("3. schwer")
     answer_difficulty = input("Wähle die Schwierigkeitsstufe: ")
 
-    # Schwierigkeitsstufe zuweisen
     if answer_difficulty == "1":
         difficulty = "leicht"
     elif answer_difficulty == "2":
@@ -24,7 +22,6 @@ def create_new_task(user_id):
         print("Ungültige Auswahl. Standardwert 'leicht' verwendet.")
         difficulty = "leicht"
 
-    # Aufgabe in die Datenbank einfügen
     database, cursor = get_database_cursor()
     status = 'Erstellt'
     current_date = date.today()

@@ -1,7 +1,6 @@
 from datetime import datetime
-
-from ToDoRPG.tasks import list_finished_tasks
 from tasks import create_new_task, list_all_tasks, delete_task, delete_all_tasks, update_task_status, list_all_open_tasks, list_finished_tasks
+
 user_id = 1
 
 def get_valid_date():
