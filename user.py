@@ -4,8 +4,6 @@ from database import get_database_cursor, commit_and_close
 def create_new_user(username):
     database, cursor = get_database_cursor()
 
-    cursor.execute('SELECT COUNT(*) FROM users')
-
     cursor.execute(''' 
         INSERT INTO users (username) 
         VALUES (?)
