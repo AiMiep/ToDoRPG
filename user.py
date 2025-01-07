@@ -49,8 +49,14 @@ def update_user_xp_and_level(user_id, xp_gain):
     if user:
         current_xp, current_lvl = user
         new_xp = current_xp + xp_gain
-        new_lvl = int(new_xp // 10)
+
+        if new_xp >= 3:
+            new_lvl = current_lvl + 1
+            new_xp = 0
+        else:
+            new_lvl = current_lvl
 
         cursor.execute('''UPDATE users SET xp = ?, level = ? WHERE users_id = ?''', (new_xp, new_lvl, user_id))
 
     commit_and_close(database)
+

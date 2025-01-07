@@ -51,6 +51,12 @@ def update_task_status(user_id):
         current_status, difficulty = task
         print(f"Aktueller Status: {current_status}")
 
+        # Überprüfen, ob der Status bereits 'Beendet' ist
+        if current_status == 'Beendet':
+            print("Aufgabe ist bereits abgeschlossen und kann nicht mehr geändert werden.")
+            commit_and_close(database)
+            return
+
         if current_status == 'Erstellt':
             new_status = 'In Bearbeitung'
         elif current_status == 'In Bearbeitung':
