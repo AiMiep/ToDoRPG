@@ -1,6 +1,8 @@
 from datetime import date
 from database import get_database_cursor, commit_and_close
+from user import update_user_xp_and_level
 import utils
+
 
 def create_new_task(user_id):
     description = input("Beschreibung: ")
@@ -34,35 +36,40 @@ def create_new_task(user_id):
     commit_and_close(database)
     print(f"Aufgabe '{description}' erfolgreich erstellt.")
 
+
 # Status einer Aufgabe ändern
 def update_task_status(user_id):
     task_id = input("Aufgaben-ID: ")
 
     database, cursor = get_database_cursor()
-    cursor.execute('SELECT status FROM tasks WHERE task_id = ? AND user_id = ?', (task_id, user_id))
+
+    cursor.execute('''SELECT status, difficulty FROM tasks WHERE task_id = ? AND user_id = ?''', (task_id, user_id))
     task = cursor.fetchone()
+    new_status = ""
 
     if task:
-        current_status = task[0]
+        current_status, difficulty = task
         print(f"Aktueller Status: {current_status}")
 
         if current_status == 'Erstellt':
             new_status = 'In Bearbeitung'
         elif current_status == 'In Bearbeitung':
             new_status = 'Beendet'
-        elif current_status == 'Beendet':
-            print("Die Aufgabe ist bereits abgeschlossen. Keine Änderungen mehr möglich.")
-            database.close()
-            return
-        else:
-            print("Unbekannter Status.")
-            database.close()
-            return
+
+            if difficulty == 'leicht':
+                xp_gain = 0.5
+            elif difficulty == 'mittel':
+                xp_gain = 1
+            elif difficulty == 'schwer':
+                xp_gain = 1.5
+            else:
+                xp_gain = 0
+
+            update_user_xp_and_level(user_id, xp_gain)
 
         cursor.execute('UPDATE tasks SET status = ? WHERE task_id = ? AND user_id = ?', (new_status, task_id, user_id))
         commit_and_close(database)
-        print(f"Status erfolgreich auf '{new_status}' geändert.")
-
+        print(f"Status wurde zu '{new_status}' geändert.")
     else:
         print("Aufgabe nicht gefunden.")
 
@@ -70,7 +77,7 @@ def update_task_status(user_id):
 # Alle Aufgaben anzeigen
 def list_all_tasks(user_id):
     database, cursor = get_database_cursor()
-    cursor.execute('SELECT * FROM tasks WHERE user_id = ?', (user_id,))
+    cursor.execute('''SELECT * FROM tasks WHERE user_id = ?''', (user_id,))
     tasks = cursor.fetchall()
 
     if tasks:
@@ -78,12 +85,13 @@ def list_all_tasks(user_id):
             print(task)
     else:
         print("LEER")
+
 
 # Alle Aufgaben anzeigen (außer abgeschlossene Aufgaben)
 def list_all_open_tasks(user_id):
     database, cursor = get_database_cursor()
 
-    cursor.execute('SELECT * FROM tasks WHERE user_id = ? AND status != ?', (user_id, 'Beendet'))
+    cursor.execute('''SELECT * FROM tasks WHERE user_id = ? AND status != ?''', (user_id, 'Beendet'))
     tasks = cursor.fetchall()
 
     if tasks:
@@ -91,12 +99,13 @@ def list_all_open_tasks(user_id):
             print(task)
     else:
         print("LEER")
+
 
 # Abgeschlossene Aufgaben anzeigen
 def list_finished_tasks(user_id):
     database, cursor = get_database_cursor()
 
-    cursor.execute('SELECT * FROM tasks WHERE user_id = ? AND status == ?', (user_id, 'Beendet'))
+    cursor.execute('''SELECT * FROM tasks WHERE user_id = ? AND status == ?''', (user_id, 'Beendet'))
     tasks = cursor.fetchall()
 
     if tasks:
@@ -104,24 +113,26 @@ def list_finished_tasks(user_id):
             print(task)
     else:
         print("LEER")
+
 
 # Alle Aufgaben löschen
 def delete_all_tasks(user_id):
     confirmation = input("Sicher? (ja/nein): ").lower()
     if confirmation == 'ja':
         database, cursor = get_database_cursor()
-        cursor.execute('DELETE FROM tasks WHERE user_id = ?', (user_id,))
+        cursor.execute('''DELETE FROM tasks WHERE user_id = ?''', (user_id,))
         commit_and_close(database)
         print("Alle Aufgaben gelöscht.")
     else:
         print("Löschen abgebrochen.")
+
 
 # Einzelne Aufgabe löschen
 def delete_task(user_id):
     task_id = input("Aufgaben-ID: ")
     database, cursor = get_database_cursor()
 
-    cursor.execute('SELECT * FROM tasks WHERE task_id = ? AND user_id = ?', (task_id, user_id))
+    cursor.execute('''SELECT * FROM tasks WHERE task_id = ? AND user_id = ?''', (task_id, user_id))
     task = cursor.fetchone()
 
     if task:

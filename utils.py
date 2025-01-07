@@ -1,5 +1,6 @@
 from datetime import datetime
 from tasks import create_new_task, list_all_tasks, delete_task, delete_all_tasks, update_task_status, list_all_open_tasks, list_finished_tasks
+from user import print_user_data
 
 user_id = 1
 
@@ -24,7 +25,8 @@ def show_task_options():
     print("5. Anzeige - Abgeschlossene Aufgaben")
     print("6. Löschung einer Aufgabe")
     print("7. Löschung aller Aufgaben")
-    print("8. Beenden")
+    print("8. Userdaten anschauen")
+    print("9. Beenden")
 
 def task_manager():
     while True:
@@ -51,9 +53,12 @@ def task_manager():
             delete_task(user_id)
 
         elif option == '7':
-            delete_all_tasks()
+            delete_all_tasks(user_id)
 
         elif option == '8':
+            print_user_data()
+
+        elif option == '9':
             print("Task-Manager beendet.")
             break
 
