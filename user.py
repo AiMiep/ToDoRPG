@@ -1,12 +1,18 @@
 from database import get_database_cursor, commit_and_close
 
 # Neuer User erstellen
-# Neuer User erstellen
 def create_new_user(username):
     try:
         database, cursor = get_database_cursor()
 
-        # Rasse wählen
+        # Prüfen, ob der Benutzername bereits existiert
+        cursor.execute('SELECT username FROM users WHERE username = ?', (username,))
+        existing_user = cursor.fetchone()
+        if existing_user:
+            print(f"Fehler: Der Benutzername '{username}' ist bereits vergeben. Bitte wähle einen anderen Namen.")
+            return
+
+        # Rasse auswählen
         print("Wähle eine Rasse:")
         print("1. Bäcker/in")
         print("2. Maler/in")
@@ -14,7 +20,7 @@ def create_new_user(username):
         rasse_choice = input("Wähle (1-3): ").strip()
         rasse = {"1": "Bäcker/in", "2": "Maler/in", "3": "Zauberer/in"}.get(rasse_choice, "Bäcker/in")
 
-        # Klasse wählen
+        # Klasse auswählen
         print("Wähle eine Klasse:")
         print("1. Anfänger")
         print("2. Fortgeschritten")
@@ -22,17 +28,49 @@ def create_new_user(username):
         klasse_choice = input("Wähle (1-3): ").strip()
         klasse = {"1": "Anfänger", "2": "Fortgeschritten", "3": "Profi"}.get(klasse_choice, "Anfänger")
 
-        # Benutzer einfügen
+        # Avatar auswählen
+        print("Wähle einen Avatar:")
+        cursor.execute('SELECT avatar_id, name FROM avatars')
+        avatars = cursor.fetchall()
+
+        if not avatars:
+            print("Fehler: Es sind keine Avatare in der Datenbank vorhanden.")
+            return
+
+        for avatar in avatars:
+            print(f"{avatar[0]}. {avatar[1]}")
+        avatar_choice = input("Wähle einen Avatar (ID): ").strip()
+        avatar_id = int(avatar_choice) if avatar_choice.isdigit() and int(avatar_choice) in [a[0] for a in avatars] else avatars[0][0]
+
+        # Benutzer in die Datenbank einfügen
         cursor.execute(''' 
-            INSERT INTO users (username, xp, level, rasse, klasse) 
-            VALUES (?, ?, ?, ?, ?)
-        ''', (username, 0, 1, rasse, klasse))
+            INSERT INTO users (username, xp, level, rasse, klasse, avatar_id) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (username, 0, 1, rasse, klasse, avatar_id))
 
         commit_and_close(database)
-        print(f"Benutzer '{username}' mit Rasse '{rasse}' und Klasse '{klasse}' erfolgreich erstellt.")
+        print(f"Benutzer '{username}' mit Rasse '{rasse}', Klasse '{klasse}' und Avatar erfolgreich erstellt.")
     except Exception as e:
         print(f"Fehler beim Erstellen des Benutzers: {e}")
 
+# Avatar ändern
+def update_avatar(user_id):
+    try:
+        database, cursor = get_database_cursor()
+
+        print("Wähle einen neuen Avatar:")
+        cursor.execute('SELECT avatar_id, name FROM avatars')
+        avatars = cursor.fetchall()
+        for avatar in avatars:
+            print(f"{avatar[0]}. {avatar[1]}")
+        avatar_choice = input("Wähle einen Avatar (ID): ").strip()
+        avatar_id = int(avatar_choice) if avatar_choice.isdigit() and int(avatar_choice) in [a[0] for a in avatars] else avatars[0][0]
+
+        cursor.execute('UPDATE users SET avatar_id = ? WHERE user_id = ?', (avatar_id, user_id))
+        commit_and_close(database)
+        print(f"Avatar erfolgreich geändert zu '{avatar_id}'.")
+    except Exception as e:
+        print(f"Fehler beim Aktualisieren des Avatars: {e}")
 
 # Rasse und Klasse ändern
 def update_race_and_class(user_id):

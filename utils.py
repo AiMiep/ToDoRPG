@@ -1,6 +1,6 @@
 from datetime import datetime
 from tasks import create_new_task, list_all_tasks, delete_task, delete_all_tasks, update_task_status, list_all_open_tasks, list_finished_tasks
-from user import print_user_data, update_race_and_class
+from user import print_user_data, update_race_and_class, update_avatar
 
 user_id = 1
 
@@ -27,7 +27,8 @@ def show_task_options():
     print("7. Alle Aufgaben löschen")
     print("8. Benutzerinformationen anzeigen")
     print("9. Rasse und Klasse ändern")
-    print("10. Beenden")
+    print("10. Avatar ändern")
+    print("11. Beenden")
     print("====================")
 
 
@@ -35,7 +36,7 @@ def task_manager():
     global user_id
     while True:
         show_task_options()
-        option = input("Wähle eine Option (1-10): ").strip()
+        option = input("Wähle eine Option (1-11): ").strip()
 
         if option == '1':
             create_new_task(user_id)
@@ -66,8 +67,11 @@ def task_manager():
             update_race_and_class(user_id)
 
         elif option == '10':
+            update_avatar(user_id)
+
+        elif option == '11':
             print("Task-Manager wird beendet. Bis bald!")
             break
 
         else:
-            print("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 10 wählen.")
+            print("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 11 wählen.")
