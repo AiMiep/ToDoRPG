@@ -1,6 +1,6 @@
 from datetime import datetime
 from tasks import create_new_task, list_all_tasks, delete_task, delete_all_tasks, update_task_status, list_all_open_tasks, list_finished_tasks
-from user import print_user_data, update_race_and_class, update_avatar
+from user import print_user_data, update_race_and_class, update_avatar, show_user_items
 
 user_id = 1
 
@@ -69,9 +69,19 @@ def task_manager():
         elif option == '10':
             update_avatar(user_id)
 
+
         elif option == '11':
+
+            show_user_items(user_id)
+
+
+        elif option == '12':
+
             print("Task-Manager wird beendet. Bis bald!")
+
             break
 
+
         else:
-            print("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 11 wählen.")
+
+            print("Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 12 wählen.")

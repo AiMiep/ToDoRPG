@@ -1,5 +1,25 @@
 from database import get_database_cursor, commit_and_close
 
+def initialize_user():
+    """
+    Prüft, ob ein Benutzer existiert. Falls nicht, wird ein neuer Benutzer erstellt.
+    """
+    if not check_if_user_exists():
+        print("Kein Benutzer gefunden. Bitte erstelle einen neuen Benutzer:")
+        username = input("Benutzername: ").strip()
+        create_new_user(username)
+    else:
+        print("Ein Benutzer ist bereits in der Datenbank vorhanden.")
+
+def check_if_user_exists():
+    database, cursor = get_database_cursor()
+    cursor.execute('SELECT COUNT(*) FROM users')
+    result = cursor.fetchone()
+    commit_and_close(database)
+
+    # Gibt True zurück, wenn Benutzer existieren, sonst False
+    return result[0] > 0
+
 # Neuer User erstellen
 def create_new_user(username):
     try:
@@ -107,16 +127,7 @@ def update_race_and_class(user_id):
 
 
 
-def check_if_user_exists():
-    database, cursor = get_database_cursor()
-    cursor.execute('''SELECT COUNT(*) FROM users''')
-    result = cursor.fetchone()
 
-    if result[0] == 0:
-        username = input("Gebe bitte einen Benutzernamen ein: ")
-        create_new_user(username)
-    else:
-        print("User bereits erstellt.")
 
 
 def print_user_data():
@@ -133,24 +144,65 @@ def print_user_data():
 
 
 def update_user_xp_and_level(user_id, xp_gain):
-    database, cursor = get_database_cursor()
+    try:
+        database, cursor = get_database_cursor()
 
-    cursor.execute('''SELECT xp, level FROM users WHERE users_id = ?''', (user_id,))
-    user = cursor.fetchone()
+        # Aktuelle XP, Level und Rasse abrufen
+        cursor.execute('''SELECT xp, level, rasse FROM users WHERE user_id = ?''', (user_id,))
+        user = cursor.fetchone()
 
-    if user:
-        current_xp, current_lvl = user
-        new_xp = current_xp + xp_gain
+        if user:
+            current_xp, current_level, rasse = user
+            new_xp = current_xp + xp_gain
 
-        if new_xp >= 3:
-            new_lvl = current_lvl + 1
-            new_xp = 0
+            # Überprüfen, ob ein Level-Up erfolgt
+            if new_xp >= 3:
+                new_level = current_level + 1
+                new_xp -= 3
+                print(f"Glückwunsch! Du bist jetzt Level {new_level}!")
+
+                # Belohnung hinzufügen
+                cursor.execute('''SELECT item_id, name FROM items WHERE rasse = ? AND level = ?''', (rasse, new_level))
+                item = cursor.fetchone()
+
+                if item:
+                    item_id, item_name = item
+                    cursor.execute('INSERT INTO user_items (user_id, item_id) VALUES (?, ?)', (user_id, item_id))
+                    print(f"Du hast ein neues Item erhalten: {item_name}")
+                else:
+                    print(f"Keine Belohnung für Level {new_level} und Rasse {rasse} gefunden.")
+
+            else:
+                new_level = current_level
+
+            # Benutzerdaten aktualisieren
+            cursor.execute('UPDATE users SET xp = ?, level = ? WHERE user_id = ?', (new_xp, new_level, user_id))
+
+        commit_and_close(database)
+    except Exception as e:
+        print(f"Fehler beim Aktualisieren von XP und Level: {e}")
+
+def show_user_items(user_id):
+    try:
+        database, cursor = get_database_cursor()
+        cursor.execute('''
+            SELECT i.name, i.path 
+            FROM user_items ui
+            JOIN items i ON ui.item_id = i.item_id
+            WHERE ui.user_id = ?
+        ''', (user_id,))
+        items = cursor.fetchall()
+
+        if items:
+            print("Deine gesammelten Items:")
+            for item in items:
+                print(f"- {item[0]} (Pfad: {item[1]})")
         else:
-            new_lvl = current_lvl
+            print("Du hast noch keine Items gesammelt.")
 
-        cursor.execute('''UPDATE users SET xp = ?, level = ? WHERE users_id = ?''', (new_xp, new_lvl, user_id))
-
-    commit_and_close(database)
+        commit_and_close(database)
+    except Exception as e:
+        print(f"Fehler beim Abrufen der Benutzer-Items: {e}")
 
 
 

@@ -54,7 +54,29 @@ def create_table():
             )
         ''')
 
-        # Avatare einfügen, falls sie noch nicht existieren
+        # Tabelle für Items
+        cursor.execute(''' 
+            CREATE TABLE IF NOT EXISTS items (
+                item_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                path TEXT,
+                rasse TEXT,
+                level INTEGER
+            )
+        ''')
+
+        # Tabelle für Benutzer-Items
+        cursor.execute(''' 
+            CREATE TABLE IF NOT EXISTS user_items (
+                user_item_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                item_id INTEGER,
+                FOREIGN KEY (user_id) REFERENCES users(user_id),
+                FOREIGN KEY (item_id) REFERENCES items(item_id)
+            )
+        ''')
+
+        # Avatare einfügen
         cursor.execute('SELECT COUNT(*) FROM avatars')
         if cursor.fetchone()[0] == 0:
             avatars = [
@@ -67,8 +89,50 @@ def create_table():
         else:
             print("Avatare sind bereits in der Datenbank vorhanden.")
 
+        # Items einfügen
+        cursor.execute('SELECT COUNT(*) FROM items')
+        if cursor.fetchone()[0] == 0:
+            items = [
+                ("Paint", "images/items/painter-paint.jpg", "Maler/in", 1),
+                ("Brushes", "images/items/painter-brushes.jpg", "Maler/in", 2),
+                ("Sketch Book", "images/items/painter-sketchbook.jpg", "Maler/in", 3),
+                ("Sugar and Salt", "images/items/baker-sugerandsalt.jpg", "Bäcker/in", 1),
+                ("Oven Mitt", "images/items/baker-oven mitt.jpg", "Bäcker/in", 2),
+                ("Mixer", "images/items/baker-mixer.jpg", "Bäcker/in", 3),
+                ("Spell Book", "images/items/witch-book.jpg", "Zauberer/in", 1),
+                ("Potion", "images/items/witch-potion.jpg", "Zauberer/in", 2),
+                ("Wizard Hat", "images/items/witch-hat.jpg", "Zauberer/in", 3),
+            ]
+            cursor.executemany('INSERT INTO items (name, path, rasse, level) VALUES (?, ?, ?, ?)', items)
+            print("Items wurden erfolgreich zur Datenbank hinzugefügt.")
+        else:
+            print("Items sind bereits in der Datenbank vorhanden.")
 
     except sqlite3.Error as e:
         print(f"Fehler beim Erstellen der Tabellen: {e}")
     finally:
         commit_and_close(database)
+
+def check_items():
+    database, cursor = get_database_cursor()
+    cursor.execute('SELECT * FROM items')
+    items = cursor.fetchall()
+    print("Verfügbare Items in der Datenbank:")
+    for item in items:
+        print(f"ID: {item[0]}, Name: {item[1]}, Pfad: {item[2]}, Rasse: {item[3]}, Level: {item[4]}")
+    commit_and_close(database)
+
+def check_tables():
+    database, cursor = get_database_cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = cursor.fetchall()
+    print("Vorhandene Tabellen in der Datenbank:")
+    for table in tables:
+        print(table[0])
+    commit_and_close(database)
+
+# Beispiel-Aufruf
+if __name__ == "__main__":
+    create_table()
+    check_tables()
+    check_items()
