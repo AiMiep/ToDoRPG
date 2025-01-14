@@ -1,15 +1,5 @@
-from database import create_table
-from user import initialize_user
-from utils import task_manager
+from task_manager_gui import start_task_manager
 
-def main():
-    create_table()
-
-    # Benutzer initialisieren
-    initialize_user()
-
-    print("\nStarte Task-Manager...")
-    task_manager()
-
-if __name__ == "__main__":
-    main()
+# Sicherstellen, dass NiceGUI mit Multiprocessing kompatibel ist
+if __name__ in {"__main__", "__mp_main__"}:
+    start_task_manager()
