@@ -1,32 +1,23 @@
-from datetime import date
+from datetime import datetime
+
+from nicegui import ui
+
 from database import get_database_cursor, commit_and_close
 from user import update_user_xp_and_level
-import utils
+
+def get_valid_date(deadline):
+    try:
+        date_obj = datetime.strptime(deadline, "%d.%m.%Y").date()
+
+        if date_obj < datetime.now().date():
+            return "Datum in der Vergangenheit."
+        return None
+    except ValueError:
+        return "Ungültiges Datum. Bitte verwenden Sie das Format TT.MM.JJJJ."
 
 
-def create_new_task(user_id):
-    description = input("Beschreibung: ")
-    deadline = utils.get_valid_date()
-
-    print("Schwierigkeitsstufen:")
-    print("1. leicht")
-    print("2. mittel")
-    print("3. schwer")
-    answer_difficulty = input("Wähle die Schwierigkeitsstufe: ")
-
-    if answer_difficulty == "1":
-        difficulty = "leicht"
-    elif answer_difficulty == "2":
-        difficulty = "mittel"
-    elif answer_difficulty == "3":
-        difficulty = "schwer"
-    else:
-        print("Ungültige Auswahl. Standardwert 'leicht' verwendet.")
-        difficulty = "leicht"
-
+def create_new_task(difficulty, description, status, current_date, deadline, user_id):
     database, cursor = get_database_cursor()
-    status = 'Erstellt'
-    current_date = date.today()
 
     cursor.execute('''
           INSERT INTO tasks (difficulty, description, status, date, deadline, user_id) 
@@ -85,40 +76,37 @@ def list_all_tasks(user_id):
     database, cursor = get_database_cursor()
     cursor.execute('''SELECT * FROM tasks WHERE user_id = ?''', (user_id,))
     tasks = cursor.fetchall()
+    database.close()
 
     if tasks:
-        for task in tasks:
-            print(task)
+        return [task for task in tasks]
     else:
-        print("LEER")
+        return []
 
-
-# Alle Aufgaben anzeigen (außer abgeschlossene Aufgaben)
+# Offene Aufgaben anzeigen
 def list_all_open_tasks(user_id):
     database, cursor = get_database_cursor()
-
     cursor.execute('''SELECT * FROM tasks WHERE user_id = ? AND status != ?''', (user_id, 'Beendet'))
     tasks = cursor.fetchall()
+    database.close()
 
     if tasks:
-        for task in tasks:
-            print(task)
+        return [task for task in tasks]
     else:
-        print("LEER")
-
+        return []
 
 # Abgeschlossene Aufgaben anzeigen
 def list_finished_tasks(user_id):
     database, cursor = get_database_cursor()
-
     cursor.execute('''SELECT * FROM tasks WHERE user_id = ? AND status == ?''', (user_id, 'Beendet'))
     tasks = cursor.fetchall()
+    database.close()
 
     if tasks:
-        for task in tasks:
-            print(task)
+        return [task for task in tasks]
     else:
-        print("LEER")
+        return []
+
 
 
 # Alle Aufgaben löschen
@@ -133,22 +121,17 @@ def delete_all_tasks(user_id):
         print("Löschen abgebrochen.")
 
 
-# Einzelne Aufgabe löschen
-def delete_task(user_id):
-    task_id = input("Aufgaben-ID: ")
+
+# Funktion zum Löschen der Aufgabe
+def delete_task(user_id, task_id):
     database, cursor = get_database_cursor()
 
     cursor.execute('''SELECT * FROM tasks WHERE task_id = ? AND user_id = ?''', (task_id, user_id))
     task = cursor.fetchone()
 
     if task:
-        confirmation = input("Sicher? (ja/nein): ").lower()
-        if confirmation == 'ja':
-            cursor.execute('DELETE FROM tasks WHERE task_id = ? AND user_id = ?', (task_id, user_id))
-            commit_and_close(database)
-            print("Aufgabe gelöscht.")
-        else:
-            print("Löschen abgebrochen.")
+        cursor.execute('DELETE FROM tasks WHERE task_id = ? AND user_id = ?', (task_id, user_id))
+        commit_and_close(database)
+        ui.notify("Aufgabe erfolgreich gelöscht.")
     else:
-        print("Aufgabe nicht gefunden.")
-        database.close()
+        ui.notify("Aufgabe nicht gefunden.")
