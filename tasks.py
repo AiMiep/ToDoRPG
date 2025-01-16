@@ -83,6 +83,19 @@ def list_all_tasks(user_id):
     else:
         return []
 
+
+def get_task_status_counts(user_id):
+    tasks = list_all_tasks(user_id)
+    task_status_counts = {'Erstellt': 0, 'In Bearbeitung': 0, 'Beendet': 0}
+
+    for task in tasks:
+        status = task[3]
+        if status in task_status_counts:
+            task_status_counts[status] += 1
+
+    return task_status_counts
+
+
 # Offene Aufgaben anzeigen
 def list_all_open_tasks(user_id):
     database, cursor = get_database_cursor()

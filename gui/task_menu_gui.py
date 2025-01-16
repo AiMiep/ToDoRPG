@@ -1,8 +1,7 @@
 from datetime import datetime
 from nicegui import ui
 from functools import partial
-from tasks import create_new_task, get_valid_date, list_all_tasks, list_finished_tasks, list_all_open_tasks, \
-    delete_all_tasks, delete_task
+from tasks import create_new_task, get_valid_date, list_all_tasks, list_finished_tasks, list_all_open_tasks, delete_all_tasks, delete_task, get_task_status_counts
 
 user_id = 1
 
@@ -62,10 +61,22 @@ def nicegui_create_new_task():
 def show_tasks_page():
     ui.label('Aufgaben anzeigen').style('text-align: center; width: 100%; font-size: 32px; font-weight: bold;')
 
+    ui.highchart({
+        'title': {'text': 'Status-Statisik'},
+        'chart': {'type': 'bar'},
+        'xAxis': {'categories': ['Erstellt', 'In Bearbeitung', 'Beendet']},
+        'yAxis': {'title': {'text': 'Anzahl der Aufgaben'}},
+        'series': [
+            {'name': 'Aufgaben', 'data': [get_task_status_counts(user_id)['Erstellt'], get_task_status_counts(user_id)['In Bearbeitung'], get_task_status_counts(user_id)['Beendet']]},
+        ],
+    }).classes('w-full h-60')
+
+
     with ui.tabs().classes('w-full') as tabs:
         open_tasks = ui.tab('Offene Aufgaben')
         all_tasks = ui.tab('Alle Aufgaben')
         finished_tasks = ui.tab('Abgeschlossene Aufgaben')
+
     with ui.tab_panels(tabs).classes('w-full'):
 
         # Offene Aufgaben
