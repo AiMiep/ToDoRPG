@@ -10,9 +10,14 @@ user_id = 1
 def nicegui_create_new_task():
     ui.label('Neue Aufgabe erstellen').style('text-align: center; width: 100%; font-size: 32px; font-weight: bold;')
 
-    description_input = ui.input(label="Beschreibung", placeholder="Beschreibe die Aufgabe...").classes('w-full')
-    deadline_input = ui.input(label="Fälligkeitsdatum (TT.MM.JJJJ)", placeholder="TT.MM.JJJJ").classes('w-full')
+    description_input = ui.input(label="Beschreibung", placeholder="Beschreibe die Aufgabe...",
+                                 validation={'Zu kurz': lambda value: len(value) >= 3}).classes('w-full')
+    deadline_input = ui.input(label="Fälligkeitsdatum", placeholder="TT.MM.JJJJ").classes('w-full')
     difficulty_input = ui.select(label="Schwierigkeitsstufe", options=["Leicht", "Mittel", "Schwer"]).classes('w-full')
+
+    current_date = datetime.today().strftime('%d.%m.%Y')
+    current_date_input = ui.input(label="Aktuelles Datum", value=current_date).classes('w-full')
+    current_date_input.disable()
 
     error_message = ui.label('').style('color: red; font-size: 14px;')  # Fehlernachricht
     success_message = ui.label('').style('color: green; font-size: 14px;')  # Erfolgsnachricht
@@ -22,24 +27,27 @@ def nicegui_create_new_task():
         deadline = deadline_input.value
         difficulty = difficulty_input.value
         status = 'Erstellt'
-        current_date = datetime.today().strftime('%d.%m.%Y')
 
         # Prüfung ob Beschreibung hinzugefügt wurde
         if not description:
-            error_message.text = "Beschreibung fehlt!."
+            error_message.text = "Beschreibung fehlt!"
             success_message.text = ''
+            return
 
         # Gültigkeitsprüfung des Datums
         date_error = get_valid_date(deadline)
         if date_error:
             error_message.text = date_error
             success_message.text = ''
+            return
 
         # Prüfung ob Schwierigkeit ausgewählt wurde
         if not difficulty:
-            error_message.text = "Schwierigkeit fehlt!."
+            error_message.text = "Schwierigkeit fehlt!"
             success_message.text = ''
+            return
 
+        # Wenn keine Fehler vorliegen, Aufgabe erstellen
         error_message.text = ''
         success_message.text = ''
 
@@ -58,8 +66,8 @@ def show_tasks_page():
         open_tasks = ui.tab('Offene Aufgaben')
         all_tasks = ui.tab('Alle Aufgaben')
         finished_tasks = ui.tab('Abgeschlossene Aufgaben')
-
     with ui.tab_panels(tabs).classes('w-full'):
+
         # Offene Aufgaben
         with ui.tab_panel(open_tasks):
             tasks = list_all_open_tasks(user_id)
@@ -149,11 +157,3 @@ def show_tasks_page():
             else:
                 ui.label("Keine abgeschlossenen Aufgaben.").classes('w-full text-center').style(
                     'color: #777; font-style: italic;')
-
-
-def show_main_menu():
-    ui.label('Task Manager Menü').style('text-align: center; width: 100%; font-size: 32px; font-weight: bold;')
-    ui.button('Neue Aufgabe erstellen',
-              on_click=lambda: ui.run_javascript("window.location.href = '/create_task';")).classes('w-full')
-    ui.button('Aufgaben anzeigen',
-              on_click=lambda: ui.run_javascript("window.location.href = '/show_tasks';")).classes('w-full')
