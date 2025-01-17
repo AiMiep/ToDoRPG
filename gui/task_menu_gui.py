@@ -69,25 +69,32 @@ def show_tasks_page():
         finished_tasks = ui.tab('Abgeschlossene Aufgaben')
 
     with (ui.tab_panels(tabs, value=open_tasks).classes('w-full')):
-
         # Offene Aufgaben
         with ui.tab_panel(open_tasks):
             tasks = list_all_open_tasks(user_id)
             if tasks:
+                # Spaltenüberschrift einmal anzeigen
+                with ui.row().classes('w-full text-center border-b border-gray-200 p-2'):
+                    ui.label("Schwierigkeit").classes('flex-1')
+                    ui.label("Beschreibung").classes('flex-1')
+                    ui.label("Erstellungsdatum").classes('flex-1')
+                    ui.label("Deadline").classes('flex-1')
+                    ui.label("Status").classes('flex-1')
+                    ui.label("Aktionen").classes('flex-1')
+
+                # Aufgaben anzeigen
                 for task in tasks:
-                    with ui.card().classes('shadow-lg bg-white rounded-lg w-full text-center'):
-                        ui.label(f"Schwierigkeit: {task[1]}").classes('w-full text-center')
-                        ui.label(f"Beschreibung: {task[2]}").classes('w-full text-center')
-                        ui.label(f"Status: {task[3]}").classes('w-full text-center')
-                        ui.label(f"Erstellungsdatum: {task[4]}").classes('w-full text-center')
-                        ui.label(f"Deadline: {task[5]}").classes('w-full text-center')
+                    with ui.row().classes('w-full text-center border-b border-gray-200 p-2'):
+                        ui.label(task[1]).classes('flex-1')  # Schwierigkeit
+                        ui.label(task[2]).classes('flex-1')  # Beschreibung
+                        ui.label(task[4]).classes('flex-1')  # Erstellungsdatum
+                        ui.label(task[5]).classes('flex-1')  # Deadline
+                        ui.label(task[3]).classes('flex-1')  # Status
 
-                        task_id = task[0]
-
-                        with ui.row().classes('w-full justify-center gap-4'):
+                        # Buttons für Aktionen
+                        with ui.row().classes('flex-1'):
                             with ui.dialog() as dialog, ui.card():
                                 ui.label('Änderungen: ')
-
                                 description_input = ui.input(label="Beschreibung").classes('w-full')
                                 deadline_input = ui.input(label="Fälligkeitsdatum", placeholder="TT.MM.JJJJ").classes(
                                     'w-full')
@@ -97,24 +104,18 @@ def show_tasks_page():
                                 current_date = datetime.today().strftime('%d.%m.%Y')
                                 current_date_input = ui.input(label="Aktuelles Datum", value=current_date).classes(
                                     'w-full')
-
                                 current_date_input.disable()
 
                                 with ui.row():
                                     ui.button('Speichern',
-                                              on_click=partial(update_task_data, user_id, task_id, description_input,
+                                              on_click=partial(update_task_data, user_id, task[0], description_input,
                                                                deadline_input, difficulty_input))
-                                    ui.button('Abbrechen', on_click=dialog.close())
+                                    ui.button('Abbrechen', on_click=dialog.close)
 
-                            # Bearbeiten-Button mit 50% Breite
-                            ui.button('Bearbeiten', on_click=dialog.open).classes(
-                                'w-1/2 rounded-full hover:bg-blue-600')
-
-                            # Löschen-Button mit 50% Breite
-                            ui.button('Löschen', on_click=partial(delete_task, user_id, task_id)).classes(
-                                'w-1/2 rounded-full hover:bg-red-600')
-
-
+                            ui.button(icon='edit', on_click=dialog.open).classes('rounded hover:bg-blue-600')
+                            ui.button(icon='update').classes('rounded')
+                            ui.button(icon='delete', on_click=partial(delete_task, user_id, task[0])).classes(
+                                'rounded hover:bg-red-600')
 
             else:
                 ui.label("Keine offene Aufgaben.").classes('w-full text-center').style(
@@ -124,29 +125,25 @@ def show_tasks_page():
         with ui.tab_panel(all_tasks):
             tasks = list_all_tasks(user_id)
             if tasks:
-                columns = [
-                    {'name': 'task_id', 'label': 'ID', 'field': 'task_id'},
-                    {'name': 'difficulty', 'label': 'Schwierigkeit', 'field': 'difficulty'},
-                    {'name': 'description', 'label': 'Beschreibung', 'field': 'description'},
-                    {'name': 'status', 'label': 'Status', 'field': 'status'},
-                    {'name': 'current_date', 'label': 'Erstellungsdatum', 'field': 'current_date'},
-                    {'name': 'deadline', 'label': 'Deadline', 'field': 'deadline'},
-                ]
+                with ui.row().classes('w-full text-center border-b border-gray-200 p-2'):
+                    ui.label("ID").classes('flex-1')
+                    ui.label("Schwierigkeit").classes('flex-1')
+                    ui.label("Beschreibung").classes('flex-1')
+                    ui.label("Erstellungsdatum").classes('flex-1')
+                    ui.label("Deadline").classes('flex-1')
+                    ui.label("Status").classes('flex-1')
 
-                rows = []
                 for task in tasks:
-                    row = {
-                        'task_id': task[0],
-                        'difficulty': task[1],
-                        'description': task[2],
-                        'status': task[3],
-                        'current_date': task[4],
-                        'deadline': task[5],
-                    }
-                    rows.append(row)
+                    task_status = task[3]
+                    created_color = 'bg-green-100' if task_status.lower() == "erstellt" else ''
 
-                # Zeige die Tabelle an
-                ui.table(columns=columns, rows=rows).classes('w-full')
+                    with ui.row().classes(f'w-full text-center border-b border-gray-200 p-2 {created_color}'):
+                        ui.label(task[0]).classes('flex-1')
+                        ui.label(task[1]).classes('flex-1')
+                        ui.label(task[2]).classes('flex-1')
+                        ui.label(task[4]).classes('flex-1')
+                        ui.label(task[5]).classes('flex-1')
+                        ui.label(task[3]).classes('flex-1')
 
             else:
                 ui.label("Keine Aufgaben.").classes('w-full text-center').style(

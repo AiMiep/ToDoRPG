@@ -27,7 +27,6 @@ def create_new_task(difficulty, description, status, current_date, deadline, use
       ''', (difficulty, description, status, current_date, deadline, user_id))
 
     commit_and_close(database)
-    print(f"Aufgabe '{description}' erfolgreich erstellt.")
 
 
 def update_task_data(user_id, task_id, description_input, deadline_input, difficulty_input):
@@ -108,6 +107,18 @@ def update_task_status(user_id):
         print("Aufgabe nicht gefunden.")
 
 
+def get_task_status_counts(user_id):
+    tasks = list_all_tasks(user_id)
+    task_status_counts = {'Erstellt': 0, 'In Bearbeitung': 0, 'Beendet': 0}
+
+    for task in tasks:
+        status = task[3]
+        if status in task_status_counts:
+            task_status_counts[status] += 1
+
+    return task_status_counts
+
+
 def list_all_tasks(user_id):
     database, cursor = get_database_cursor()
     cursor.execute('''SELECT * FROM tasks WHERE user_id = ?''', (user_id,))
@@ -119,18 +130,6 @@ def list_all_tasks(user_id):
 
     else:
         return []
-
-
-def get_task_status_counts(user_id):
-    tasks = list_all_tasks(user_id)
-    task_status_counts = {'Erstellt': 0, 'In Bearbeitung': 0, 'Beendet': 0}
-
-    for task in tasks:
-        status = task[3]
-        if status in task_status_counts:
-            task_status_counts[status] += 1
-
-    return task_status_counts
 
 
 def list_all_open_tasks(user_id):
