@@ -14,19 +14,20 @@ def get_all_avatars():
     return avatars
 
 
+from database import get_database_cursor, commit_and_close
+
 def initialize_user():
     """
-    Prüft, ob ein Benutzer existiert. Falls nicht, wird ein neuer Benutzer erstellt.
+    Prüft, ob ein Benutzer existiert.
+    Gibt True zurück, wenn ein Benutzer existiert, andernfalls False.
     """
-    if not check_if_user_exists():
-        print("Kein Benutzer gefunden. Bitte erstelle einen neuen Benutzer:")
-        username = input("Benutzername: ").strip()
-        rasse = input("Rasse: ").strip()
-        klasse = input("Klasse: ").strip()
-        avatar_id = input("Avatar-ID: ").strip()
-        create_new_user(username, rasse, klasse, avatar_id)
-    else:
-        print("Ein Benutzer ist bereits in der Datenbank vorhanden.")
+    database, cursor = get_database_cursor()
+    cursor.execute('SELECT COUNT(*) FROM users')
+    result = cursor.fetchone()
+    commit_and_close(database)
+
+    print(f"DEBUG: Anzahl der Benutzer in der Datenbank: {result[0]}")
+    return result[0] > 0
 
 
 def check_if_user_exists():
