@@ -67,17 +67,20 @@ def create_new_user(username, rasse, klasse, avatar_id):
         print(f"Fehler beim Erstellen des Benutzers: {e}")
 
 
-def update_avatar(user_id, avatar_id):
+from database import get_database_cursor, commit_and_close
+
+def update_user_avatar(user_id, avatar_id):
     """
-    Aktualisiert den Avatar des Benutzers.
+    Aktualisiert den Avatar eines Benutzers in der Datenbank.
     """
     try:
         database, cursor = get_database_cursor()
         cursor.execute('UPDATE users SET avatar_id = ? WHERE user_id = ?', (avatar_id, user_id))
         commit_and_close(database)
-        print(f"Avatar erfolgreich geändert zu '{avatar_id}'.")
+        print(f"Avatar für Benutzer {user_id} erfolgreich auf {avatar_id} geändert.")
     except Exception as e:
-        print(f"Fehler beim Aktualisieren des Avatars: {e}")
+        print(f"Fehler beim Ändern des Avatars: {e}")
+
 
 
 def update_race_and_class(user_id, rasse, klasse):
@@ -164,3 +167,60 @@ def show_user_items(user_id):
     except Exception as e:
         print(f"Fehler beim Abrufen der Benutzer-Items: {e}")
         return []
+
+from database import get_database_cursor, commit_and_close
+
+def get_all_users():
+    """
+    Ruft alle Benutzer aus der Datenbank ab.
+    Gibt eine Liste von Tupeln mit Benutzerinformationen zurück.
+    """
+    try:
+        database, cursor = get_database_cursor()
+        cursor.execute('SELECT user_id, username, rasse, klasse, avatar_id, level, xp FROM users')
+        users = cursor.fetchall()
+        commit_and_close(database)
+        return users
+    except Exception as e:
+        print(f"Fehler beim Abrufen aller Benutzer: {e}")
+        return []
+
+def get_user_by_id(user_id):
+    """
+    Ruft die Informationen eines bestimmten Benutzers anhand der Benutzer-ID ab.
+    Gibt ein Tupel mit Benutzerinformationen zurück oder None, falls der Benutzer nicht existiert.
+    """
+    try:
+        database, cursor = get_database_cursor()
+        cursor.execute('SELECT username, rasse, klasse, avatar_id, level, xp FROM users WHERE user_id = ?', (user_id,))
+        user = cursor.fetchone()
+        commit_and_close(database)
+        return user
+    except Exception as e:
+        print(f"Fehler beim Abrufen des Benutzers mit ID {user_id}: {e}")
+        return None
+
+# def switch_user(new_user_id):
+#     """
+#     Wechselt den aktuellen Benutzer.
+#     """
+#     global user_id
+#     user_id = new_user_id
+#     ui.notify(f'Benutzer erfolgreich gewechselt! Neuer Benutzer-ID: {user_id}', color='positive')
+
+def select_avatar(avatar_id):
+    """
+    Speichert den ausgewählten Avatar für den aktuellen Benutzer.
+    """
+    global user_id
+    update_user_avatar(user_id, avatar_id)
+    ui.notify(f"Avatar erfolgreich geändert! Neuer Avatar-ID: {avatar_id}", color='positive')
+
+def select_user(selected_user_id):
+    """
+    Aktualisiert die globale Benutzer-ID.
+    """
+    global user_id
+    user_id = selected_user_id
+    print(f"DEBUG: Benutzer-ID wurde auf {user_id} gesetzt.")
+    ui.notify(f"Benutzer erfolgreich gewechselt! Neue Benutzer-ID: {user_id}", color='positive')

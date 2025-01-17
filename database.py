@@ -21,6 +21,7 @@ def commit_and_close(database):
 def create_table():
     """
     Erstellt alle erforderlichen Tabellen in der Datenbank, falls diese nicht existieren.
+    Fügt bei Bedarf neue Spalten hinzu.
     """
     database, cursor = get_database_cursor()
 
@@ -32,6 +33,13 @@ def create_table():
             path TEXT
         )
     ''')
+
+    # **Prüfen, ob die Spalte "description" in der Tabelle "avatars" fehlt und ggf. hinzufügen**
+    cursor.execute("PRAGMA table_info(avatars)")
+    columns = [column[1] for column in cursor.fetchall()]
+    if "description" not in columns:
+        cursor.execute("ALTER TABLE avatars ADD COLUMN description TEXT DEFAULT 'Keine Beschreibung'")
+        print("Spalte 'description' zur Tabelle 'avatars' hinzugefügt.")
 
     # Tabelle für Benutzer
     cursor.execute('''
@@ -83,13 +91,14 @@ def create_table():
         )
     ''')
 
+
     # Avatare einfügen
     cursor.execute('SELECT COUNT(*) FROM avatars')
-    if cursor.fetchone()[0] == 0:
+    if cursor.fetchone()[0] == 0:  # Wenn keine Avatare existieren
         avatars = [
-            ("Bäcker/in", "images/avatars/baker.png"),
-            ("Maler/in", "images/avatars/painter.png"),
-            ("Zauberer/in", "images/avatars/witch.png"),
+            ("Bäcker/in", "avatars/baker.png"),  # Nur 'avatars/' ohne 'images/'
+            ("Maler/in", "avatars/painter.png"),
+            ("Zauberer/in", "avatars/witch.png"),
         ]
         cursor.executemany('INSERT INTO avatars (name, path) VALUES (?, ?)', avatars)
         print("Avatare wurden erfolgreich zur Datenbank hinzugefügt.")
