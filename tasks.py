@@ -27,7 +27,6 @@ def create_new_task(difficulty, description, status, current_date, deadline, use
       ''', (difficulty, description, status, current_date, deadline, user_id))
 
     commit_and_close(database)
-    print(f"Aufgabe '{description}' erfolgreich erstellt.")
 
 
 def update_task_data(user_id, task_id, description_input, deadline_input, difficulty_input):
@@ -67,9 +66,7 @@ def update_task_data(user_id, task_id, description_input, deadline_input, diffic
     ui.run_javascript('location.href = "/show_tasks"')
 
 
-def update_task_status(user_id):
-    task_id = input("Aufgaben-ID: ")
-
+def update_task_status(user_id, task_id):
     database, cursor = get_database_cursor()
 
     cursor.execute('''SELECT status, difficulty FROM tasks WHERE task_id = ? AND user_id = ?''', (task_id, user_id))
@@ -78,10 +75,7 @@ def update_task_status(user_id):
 
     if task:
         current_status, difficulty = task
-        print(f"Aktueller Status: {current_status}")
-
         if current_status == 'Beendet':
-            print("Aufgabe ist bereits abgeschlossen und kann nicht mehr geändert werden.")
             commit_and_close(database)
             return
 
@@ -103,9 +97,20 @@ def update_task_status(user_id):
 
         cursor.execute('UPDATE tasks SET status = ? WHERE task_id = ? AND user_id = ?', (new_status, task_id, user_id))
         commit_and_close(database)
-        print(f"Status wurde zu '{new_status}' geändert.")
-    else:
-        print("Aufgabe nicht gefunden.")
+
+    ui.run_javascript('window.location.href = "/show_tasks";')
+
+
+def get_task_status_counts(user_id):
+    tasks = list_all_tasks(user_id)
+    task_status_counts = {'Erstellt': 0, 'In Bearbeitung': 0, 'Beendet': 0}
+
+    for task in tasks:
+        status = task[3]
+        if status in task_status_counts:
+            task_status_counts[status] += 1
+
+    return task_status_counts
 
 
 def list_all_tasks(user_id):
@@ -119,18 +124,6 @@ def list_all_tasks(user_id):
 
     else:
         return []
-
-
-def get_task_status_counts(user_id):
-    tasks = list_all_tasks(user_id)
-    task_status_counts = {'Erstellt': 0, 'In Bearbeitung': 0, 'Beendet': 0}
-
-    for task in tasks:
-        status = task[3]
-        if status in task_status_counts:
-            task_status_counts[status] += 1
-
-    return task_status_counts
 
 
 def list_all_open_tasks(user_id):
