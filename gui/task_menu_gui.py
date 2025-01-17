@@ -1,9 +1,11 @@
 from datetime import datetime
 from nicegui import ui
 from functools import partial
-from tasks import create_new_task, get_valid_date, list_all_tasks, list_finished_tasks, list_all_open_tasks, delete_all_tasks, delete_task, get_task_status_counts
+from tasks import create_new_task, get_valid_date, list_all_tasks, list_finished_tasks, list_all_open_tasks, \
+    delete_all_tasks, delete_task, update_task_data
 
 user_id = 1
+
 
 @ui.page('/create_task')
 def nicegui_create_new_task():
@@ -61,23 +63,12 @@ def nicegui_create_new_task():
 def show_tasks_page():
     ui.label('Aufgaben anzeigen').style('text-align: center; width: 100%; font-size: 32px; font-weight: bold;')
 
-    ui.highchart({
-        'title': {'text': 'Status-Statisik'},
-        'chart': {'type': 'bar'},
-        'xAxis': {'categories': ['Erstellt', 'In Bearbeitung', 'Beendet']},
-        'yAxis': {'title': {'text': 'Anzahl der Aufgaben'}},
-        'series': [
-            {'name': 'Aufgaben', 'data': [get_task_status_counts(user_id)['Erstellt'], get_task_status_counts(user_id)['In Bearbeitung'], get_task_status_counts(user_id)['Beendet']]},
-        ],
-    }).classes('w-full h-60')
-
-
     with ui.tabs().classes('w-full') as tabs:
         open_tasks = ui.tab('Offene Aufgaben')
         all_tasks = ui.tab('Alle Aufgaben')
         finished_tasks = ui.tab('Abgeschlossene Aufgaben')
 
-    with ui.tab_panels(tabs).classes('w-full'):
+    with (ui.tab_panels(tabs, value=open_tasks).classes('w-full')):
 
         # Offene Aufgaben
         with ui.tab_panel(open_tasks):
@@ -93,15 +84,37 @@ def show_tasks_page():
 
                         task_id = task[0]
 
-                        # Container für die Buttons nebeneinander und mittig
                         with ui.row().classes('w-full justify-center gap-4'):
+                            with ui.dialog() as dialog, ui.card():
+                                ui.label('Änderungen: ')
+
+                                description_input = ui.input(label="Beschreibung").classes('w-full')
+                                deadline_input = ui.input(label="Fälligkeitsdatum", placeholder="TT.MM.JJJJ").classes(
+                                    'w-full')
+                                difficulty_input = ui.select(label="Schwierigkeitsstufe",
+                                                             options=["Leicht", "Mittel", "Schwer"]).classes('w-full')
+
+                                current_date = datetime.today().strftime('%d.%m.%Y')
+                                current_date_input = ui.input(label="Aktuelles Datum", value=current_date).classes(
+                                    'w-full')
+
+                                current_date_input.disable()
+
+                                with ui.row():
+                                    ui.button('Speichern',
+                                              on_click=partial(update_task_data, user_id, task_id, description_input,
+                                                               deadline_input, difficulty_input))
+                                    ui.button('Abbrechen', on_click=dialog.close())
+
+                            # Bearbeiten-Button mit 50% Breite
+                            ui.button('Bearbeiten', on_click=dialog.open).classes(
+                                'w-1/2 rounded-full hover:bg-blue-600')
+
                             # Löschen-Button mit 50% Breite
                             ui.button('Löschen', on_click=partial(delete_task, user_id, task_id)).classes(
                                 'w-1/2 rounded-full hover:bg-red-600')
 
-                            # Bearbeiten-Button mit 50% Breite
-                            ui.button('Bearbeiten', on_click=partial(delete_task, user_id, task_id)).classes(
-                                'w-1/2 rounded-full hover:bg-blue-600')
+
 
             else:
                 ui.label("Keine offene Aufgaben.").classes('w-full text-center').style(
