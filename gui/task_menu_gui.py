@@ -2,7 +2,7 @@ from datetime import datetime
 from nicegui import ui
 from functools import partial
 from tasks import create_new_task, get_valid_date, list_all_tasks, list_finished_tasks, list_all_open_tasks, \
-    delete_all_tasks, delete_task, update_task_data
+    delete_all_tasks, delete_task, update_task_data, update_task_status
 
 user_id = 1
 
@@ -113,7 +113,8 @@ def show_tasks_page():
                                     ui.button('Abbrechen', on_click=dialog.close)
 
                             ui.button(icon='edit', on_click=dialog.open).classes('rounded hover:bg-blue-600')
-                            ui.button(icon='update').classes('rounded')
+                            ui.button(icon='update', on_click=partial(update_task_status, user_id, task[0])).classes(
+                                'rounded hover:bg-red-600')
                             ui.button(icon='delete', on_click=partial(delete_task, user_id, task[0])).classes(
                                 'rounded hover:bg-red-600')
 
@@ -135,9 +136,11 @@ def show_tasks_page():
 
                 for task in tasks:
                     task_status = task[3]
-                    created_color = 'bg-green-100' if task_status.lower() == "erstellt" else ''
+                    created_color = 'bg-red-100' if task_status.lower() == "erstellt" else ''
+                    finished_color = 'bg-green-100' if task_status.lower() == "beendet" else ''
 
-                    with ui.row().classes(f'w-full text-center border-b border-gray-200 p-2 {created_color}'):
+                    with ui.row().classes(
+                            f'w-full text-center border-b border-gray-200 p-2 {created_color} {finished_color}'):
                         ui.label(task[0]).classes('flex-1')
                         ui.label(task[1]).classes('flex-1')
                         ui.label(task[2]).classes('flex-1')
