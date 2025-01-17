@@ -1,15 +1,14 @@
 from database import create_table
+from gui.taskify_gui import show_main_menu
+from nicegui import ui
+import gui.task_menu_gui
 from user import initialize_user
-from utils import task_manager
+
 
 def main():
     create_table()
-
-    # Benutzer initialisieren
     initialize_user()
+    show_main_menu()
+    ui.run()
 
-    print("\nStarte Task-Manager...")
-    task_manager()
-
-if __name__ == "__main__":
-    main()
+main()
