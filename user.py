@@ -114,37 +114,74 @@ def print_user_data():
     else:
         return {}
 
-
-def update_user_xp_and_level(user_id, xp_gain):
+def refresh_user_data(user_id):
+    """
+    Aktualisiert die UI mit den neuesten Benutzerinformationen.
+    """
     try:
         database, cursor = get_database_cursor()
+        cursor.execute('SELECT xp, level FROM users WHERE user_id = ?', (user_id,))
+        user_data = cursor.fetchone()
+        commit_and_close(database)
+
+        if user_data:
+            xp, level = user_data
+            print(f"DEBUG: Benutzer-ID {user_id} - XP: {xp}, Level: {level}")
+            ui.notify(f"XP: {xp}, Level: {level}", color='positive')
+        else:
+            print(f"Fehler: Benutzer mit ID {user_id} nicht gefunden.")
+    except Exception as e:
+        print(f"Fehler beim Aktualisieren der Benutzeroberfläche: {e}")
+
+
+
+def update_user_xp_and_level(user_id, xp_gain):
+    """
+    Aktualisiert die XP und das Level eines Benutzers und fügt ggf. ein Level-Up-Belohnungsitem hinzu.
+    """
+    try:
+        database, cursor = get_database_cursor()
+
         cursor.execute('SELECT xp, level, rasse FROM users WHERE user_id = ?', (user_id,))
         user = cursor.fetchone()
 
-        if user:
-            current_xp, current_level, rasse = user
-            new_xp = current_xp + xp_gain
-
-            if new_xp >= 3:
-                new_level = current_level + 1
-                new_xp -= 3
-                cursor.execute('UPDATE users SET xp = ?, level = ? WHERE user_id = ?', (new_xp, new_level, user_id))
-
-                # Belohnung für Levelaufstieg
-                cursor.execute('SELECT item_id, name, path FROM items WHERE rasse = ? AND level = ?', (rasse, new_level))
-                item = cursor.fetchone()
-                if item:
-                    item_id, item_name, item_path = item
-                    cursor.execute('INSERT INTO user_items (user_id, item_id) VALUES (?, ?)', (user_id, item_id))
-
-                    # Item-Bild anzeigen
-                    with ui.dialog() as dialog, ui.card():
-                        ui.label(f'Belohnung erhalten: {item_name}').classes('text-bold')
-                        ui.image(item_path).classes('w-64 h-64')
-                        ui.button('Schließen', on_click=dialog.close)
-                        dialog.open()
-
+        if not user:
+            print(f"Fehler: Benutzer mit ID {user_id} wurde nicht gefunden.")
             commit_and_close(database)
+            return
+
+        current_xp, current_level, rasse = user
+        print(f"DEBUG: Vorher - XP: {current_xp}, Level: {current_level}")
+
+        new_xp = current_xp + xp_gain
+        new_level = current_level
+
+        if new_xp >= 3:
+            new_level += 1
+            new_xp -= 3
+            print(f"DEBUG: Level-Up! Neues Level: {new_level}, Rest-XP: {new_xp}")
+
+        cursor.execute('UPDATE users SET xp = ?, level = ? WHERE user_id = ?', (new_xp, new_level, user_id))
+
+        if new_level > current_level:
+            cursor.execute('SELECT item_id, name, path FROM items WHERE rasse = ? AND level = ?', (rasse, new_level))
+            item = cursor.fetchone()
+            if item:
+                item_id, item_name, item_path = item
+                cursor.execute('INSERT INTO user_items (user_id, item_id) VALUES (?, ?)', (user_id, item_id))
+                print(f"DEBUG: Belohnung hinzugefügt: {item_name} (ID: {item_id})")
+
+                with ui.dialog() as dialog, ui.card():
+                    ui.label(f'Belohnung erhalten: {item_name}').classes('text-bold')
+                    ui.image(item_path).classes('w-64 h-64')
+                    ui.button('Schließen', on_click=dialog.close)
+                    dialog.open()
+
+        commit_and_close(database)
+        print(f"DEBUG: Nachher - XP: {new_xp}, Level: {new_level}")
+
+        refresh_user_data(user_id)
+
     except Exception as e:
         print(f"Fehler beim Aktualisieren von XP und Level: {e}")
 

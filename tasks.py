@@ -1,8 +1,6 @@
 from datetime import datetime
 
 from nicegui import ui
-from nicegui.html import dialog
-
 from database import get_database_cursor, commit_and_close
 from user import update_user_xp_and_level
 
@@ -84,11 +82,11 @@ def update_task_status(user_id, task_id):
         elif current_status == 'In Bearbeitung':
             new_status = 'Beendet'
 
-            if difficulty == 'leicht':
+            if difficulty.lower() == 'leicht':
                 xp_gain = 0.5
-            elif difficulty == 'mittel':
+            elif difficulty.lower() == 'mittel':
                 xp_gain = 1
-            elif difficulty == 'schwer':
+            elif difficulty.lower() == 'schwer':
                 xp_gain = 1.5
             else:
                 xp_gain = 0
