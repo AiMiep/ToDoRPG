@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from nicegui import ui
 from database import get_database_cursor, commit_and_close
 from user import update_user_xp_and_level
@@ -10,10 +9,10 @@ def get_valid_date(deadline):
         date_obj = datetime.strptime(deadline, "%d.%m.%Y").date()
 
         if date_obj < datetime.now().date():
-            return "Datum in der Vergangenheit."
+            return "❌ Datum ist in der Vergangenheit!"
         return None
     except ValueError:
-        return "Ungültiges Datum. Bitte verwenden Sie das Format TT.MM.JJJJ."
+        return "❌ Da stimmt doch was mit dem Datum nicht..."
 
 
 def create_new_task(difficulty, description, status, current_date, deadline, user_id):
