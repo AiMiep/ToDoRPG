@@ -40,7 +40,6 @@ def main():
         Zeigt das Hauptmenü mit Navigation zu den verschiedenen Bereichen.
         """
         show_main_menu()
-        ui.button('User Funktionen', on_click=lambda: ui.run_javascript("window.location.href='/functions';")).classes('w-full')
 
     # NiceGUI starten
     ui.run()

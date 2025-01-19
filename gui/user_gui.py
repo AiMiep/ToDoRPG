@@ -9,7 +9,7 @@ user_id = 1
 # Statische Dateien bereitstellen
 app.add_static_files('/images', os.path.join(os.getcwd(), 'images'))
 
-@ui.page('/functions')
+@ui.page('/user_functions')
 def functions_page():
     """
     Zeigt die zentrale Seite mit Dialogfenstern für Benutzeraktionen und Avatare.

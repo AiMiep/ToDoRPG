@@ -4,8 +4,9 @@ from tasks import get_task_status_counts
 
 user_id = 1
 
-def show_main_menu():
 
+@ui.page('/homepage')
+def show_main_menu():
     ui.label('Taskify').style('text-align: center; width: 100%; font-size: 32px; font-weight: bold;')
 
     ui.highchart({
@@ -24,4 +25,5 @@ def show_main_menu():
               on_click=lambda: ui.run_javascript("window.location.href = '/create_task';")).classes('w-full')
     ui.button('Aufgaben anzeigen',
               on_click=lambda: ui.run_javascript("window.location.href = '/show_tasks';")).classes('w-full')
-
+    ui.button('User Funktionen',
+              on_click=lambda: ui.run_javascript("window.location.href = '/user_functions';")).classes('w-full')
