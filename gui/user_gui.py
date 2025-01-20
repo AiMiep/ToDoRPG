@@ -55,7 +55,7 @@ def functions_page():
 
             # Zurück zum Hauptmenü
             ui.button('🏠 Zurück zum Hauptmenü',
-                      on_click=lambda: ui.run_javascript("window.location.href='/main_menu';")).classes(
+                      on_click=lambda: ui.run_javascript("window.location.href='/homepage';")).classes(
                 'bg-gray-600 text-white font-bold text-lg w-full rounded-lg py-3 mt-6 hover:shadow-xl')
 
 

@@ -79,4 +79,4 @@ def user_creation_page():
 
         # Fortschrittsbalken aktualisieren und weiterleiten
         progress.set_value(1)
-        ui.timer(1, lambda: ui.run_javascript('window.location.href="/main_menu"'))
+        ui.timer(1, lambda: ui.run_javascript('window.location.href="/user_functions"'))
