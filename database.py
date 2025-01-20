@@ -103,24 +103,53 @@ def create_table():
         cursor.executemany('INSERT INTO avatars (name, path) VALUES (?, ?)', avatars)
         print("Avatare wurden erfolgreich zur Datenbank hinzugefügt.")
 
-    # Items einfügen
-    cursor.execute('SELECT COUNT(*) FROM items')
-    if cursor.fetchone()[0] == 0:  # Wenn keine Items existieren
-        items = [
-            ("Paint", "items/painter-paint.jpg", "Maler/in", 1),
-            ("Brushes", "items/painter-brushes.jpg", "Maler/in", 2),
-            ("SketchBook", "items/painter-sketchbook.jpg", "Maler/in", 3),
-            ("Sugar and Salt", "items/baker-sugerandsalt.jpg", "Bäcker/in", 1),
-            ("Oven Mitt", "items/baker-oven mitt.jpg", "Bäcker/in", 2),
-            ("Mixer", "items/baker-mixer.jpg", "Bäcker/in", 3),
-            ("Spell Book", "items/witch-book.jpg", "Zauberer/in", 1),
-            ("Potion", "items/witch-potion.jpg", "Zauberer/in", 2),
-            ("Wizard Hat", "items/witch-hat.jpg", "Zauberer/in", 3),
-        ]
-        cursor.executemany('INSERT INTO items (name, path, rasse, level) VALUES (?, ?, ?, ?)', items)
-        print("Items wurden erfolgreich zur Datenbank hinzugefügt.")
+    # Füge neue Items hinzu, ohne alte zu löschen
+    items = [
+        # Mario-Items (M)
+        ("Mario Level 2", "newItems/M-Level1.jpeg", "Mensch (Mario Bros)", 2),
+        ("Mario Level 3", "newItems/M-Level2.jpeg", "Mensch (Mario Bros)", 3),
+        ("Mario Level 4", "newItems/M-Level3.jpeg", "Mensch (Mario Bros)", 4),
+        ("Mario Level 5", "newItems/M-Level4.jpeg", "Mensch (Mario Bros)", 5),
+        ("Mario Level 6", "newItems/M-Level5.jpeg", "Mensch (Mario Bros)", 6),
+        ("Mario Level 7", "newItems/M-Level6.jpeg", "Mensch (Mario Bros)", 7),
+        ("Mario Level 8", "newItems/M-Level7.jpeg", "Mensch (Mario Bros)", 8),
+        ("Mario Level 9", "newItems/M-Level8.jpeg", "Mensch (Mario Bros)", 9),
+        ("Mario Level 10", "newItems/M-Level9.jpeg", "Mensch (Mario Bros)", 10),
+
+        # Pokémon-Items (P)
+        ("Pokémon Level 2", "newItems/P-Level1.jpeg", "Pokémon-Trainer (Pokémon)", 2),
+        ("Pokémon Level 3", "newItems/P-Level2.jpeg", "Pokémon-Trainer (Pokémon)", 3),
+        ("Pokémon Level 4", "newItems/P-Level3.jpeg", "Pokémon-Trainer (Pokémon)", 4),
+        ("Pokémon Level 5", "newItems/P-Level4.jpeg", "Pokémon-Trainer (Pokémon)", 5),
+        ("Pokémon Level 6", "newItems/P-Level5.jpg", "Pokémon-Trainer (Pokémon)", 6),
+        ("Pokémon Level 7", "newItems/P-Level6.jpeg", "Pokémon-Trainer (Pokémon)", 7),
+        ("Pokémon Level 8", "newItems/P-Level7.jpeg", "Pokémon-Trainer (Pokémon)", 8),
+        ("Pokémon Level 9", "newItems/P-Level8.jpeg", "Pokémon-Trainer (Pokémon)", 9),
+        ("Pokémon Level 10", "newItems/P-Level9.jpg", "Pokémon-Trainer (Pokémon)", 10),
+
+        # Zelda-Items (Z)
+        ("Zelda Level 2", "newItems/Z-Level1.jpeg", "Goronen/Zoras/Rito/Gerudo (Zelda)", 2),
+        ("Zelda Level 3", "newItems/Z-Level2.jpeg", "Goronen/Zoras/Rito/Gerudo (Zelda)", 3),
+        ("Zelda Level 4", "newItems/Z-Level3.jpeg", "Goronen/Zoras/Rito/Gerudo (Zelda)", 4),
+        ("Zelda Level 5", "newItems/Z-Level4.jpeg", "Goronen/Zoras/Rito/Gerudo (Zelda)", 5),
+        ("Zelda Level 6", "newItems/Z-Level5.jpeg", "Goronen/Zoras/Rito/Gerudo (Zelda)", 6),
+        ("Zelda Level 7", "newItems/Z-Level6.jpeg", "Goronen/Zoras/Rito/Gerudo (Zelda)", 7),
+        ("Zelda Level 8", "newItems/Z-Level7.jpeg", "Goronen/Zoras/Rito/Gerudo (Zelda)", 8),
+        ("Zelda Level 9", "newItems/Z-Level8.jpeg", "Goronen/Zoras/Rito/Gerudo (Zelda)", 9),
+        ("Zelda Level 10", "newItems/Z-Level9.jpeg", "Goronen/Zoras/Rito/Gerudo (Zelda)", 10),
+    ]
+
+    for name, path, rasse, level in items:
+        # Prüfe, ob das Item bereits existiert
+        cursor.execute('SELECT COUNT(*) FROM items WHERE name = ? AND rasse = ? AND level = ?', (name, rasse, level))
+        if cursor.fetchone()[0] == 0:
+            # Füge das Item nur hinzu, wenn es noch nicht existiert
+            cursor.execute('INSERT INTO items (name, path, rasse, level) VALUES (?, ?, ?, ?)',
+                           (name, path, rasse, level))
+            print(f"Item hinzugefügt: {name} (Rasse: {rasse}, Level: {level})")
 
     commit_and_close(database)
+    print("Neue Items wurden erfolgreich hinzugefügt (nur fehlende Items).")
 
 
 def get_all_tasks(user_id):

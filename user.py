@@ -20,7 +20,6 @@ def create_new_user(username, rasse, klasse, avatar_id):
         existing_user = cursor.fetchone()
         if existing_user:
             print(f"Fehler: Der Benutzername '{username}' ist bereits vergeben.")
-            commit_and_close(database)
             return
 
         # Benutzer in die Datenbank einfügen
@@ -29,10 +28,20 @@ def create_new_user(username, rasse, klasse, avatar_id):
             VALUES (?, ?, ?, ?, ?, ?)
         ''', (username, 0, 1, rasse, klasse, avatar_id))
 
-        commit_and_close(database)
-        print(f"DEBUG: Benutzer '{username}' wurde erfolgreich erstellt.")
+        # Benutzer-ID des neu erstellten Benutzers abrufen
+        user_id = cursor.lastrowid
+        print(f"DEBUG: Neuer Benutzer erstellt mit ID {user_id}, Rasse: {rasse}")
+
+        # Vergibt das Level-1-Item basierend auf der Rasse (still im Hintergrund)
+        item_name, item_path = assign_item_on_level_up(user_id, rasse, 1)
+        if item_name:
+            print(f"DEBUG: Benutzer erhält Level-1-Item: {item_name}")
+
     except Exception as e:
         print(f"Fehler beim Erstellen des Benutzers: {e}")
+    finally:
+        # Verbindung immer schließen
+        commit_and_close(database)
 
 def get_all_users():
     """Ruft alle Benutzer aus der Datenbank ab."""
@@ -134,8 +143,6 @@ def update_user_xp_and_level(user_id, xp_gain):
             return
 
         current_xp, current_level, rasse = user
-        print(f"DEBUG: Vorher - XP: {current_xp}, Level: {current_level}")
-
         new_xp = current_xp + xp_gain
         new_level = current_level
 
@@ -143,12 +150,21 @@ def update_user_xp_and_level(user_id, xp_gain):
         if new_xp >= 3:
             new_level += 1
             new_xp -= 3
-            print(f"DEBUG: Level-Up! Neues Level: {new_level}, Rest-XP: {new_xp}")
+
+            # Item vergeben
+            item_name, item_path = assign_item_on_level_up(user_id, rasse, new_level)
+            if item_name and item_path:
+                with ui.dialog() as dialog:
+                    with ui.card():
+                        ui.label(f"🎉 Glückwunsch zum Level-Up auf Level {new_level}!").classes('text-2xl font-bold')
+                        ui.image(f'/images/{item_path}').classes('w-32 h-32 object-cover rounded-full')
+                        ui.label(f"Du hast das Item '{item_name}' erhalten!").classes('text-lg')
+                        ui.button("Schließen", on_click=dialog.close).classes('bg-blue-500 text-white rounded-md')
+                    dialog.open()
 
         # Update in der Datenbank
         cursor.execute('UPDATE users SET xp = ?, level = ? WHERE user_id = ?', (new_xp, new_level, user_id))
         commit_and_close(database)
-        print(f"DEBUG: Nachher - XP: {new_xp}, Level: {new_level}")
 
         # UI aktualisieren
         refresh_user_data(user_id)
@@ -164,3 +180,41 @@ def select_user(selected_user_id):
     user_id = selected_user_id
     print(f"DEBUG: Benutzer-ID wurde auf {user_id} gesetzt.")
     ui.notify(f"Benutzer erfolgreich gewechselt! Neue Benutzer-ID: {user_id}", color='positive')
+
+def assign_item_on_level_up(user_id, rasse, level):
+    """Vergibt ein Item basierend auf Rasse und Level (ab Level 2)."""
+    try:
+        # Nur ab Level 2 vergeben
+        if level < 2:
+            print(f"DEBUG: Kein Item für Level {level}, da Items erst ab Level 2 vergeben werden.")
+            return None, None
+
+        database, cursor = get_database_cursor()
+        print(f"DEBUG: Vergabe eines Items für Benutzer {user_id}, Rasse: {rasse}, Level: {level}")
+
+        # Suche nach einem passenden Item basierend auf Rasse und Level
+        cursor.execute(
+            'SELECT item_id, name, path FROM items WHERE rasse = ? AND level = ?',
+            (rasse, level)
+        )
+        item = cursor.fetchone()
+        if item:
+            item_id, item_name, item_path = item
+            print(f"DEBUG: Gefundenes Item: {item_name}, Pfad: {item_path}")
+
+            # Verknüpfe das Item mit dem Benutzer
+            cursor.execute(
+                'INSERT INTO user_items (user_id, item_id) VALUES (?, ?)',
+                (user_id, item_id)
+            )
+            database.commit()  # Änderungen speichern
+            return item_name, item_path
+        else:
+            print(f"DEBUG: Kein Item für Rasse '{rasse}' und Level {level} gefunden.")
+            return None, None
+    except Exception as e:
+        print(f"Fehler beim Zuweisen eines Items: {e}")
+        return None, None
+    finally:
+        commit_and_close(database)
+
