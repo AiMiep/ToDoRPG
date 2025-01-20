@@ -169,7 +169,6 @@ def show_all_users_dialog():
 
         dialog.open()
 
-
 def show_user_items_dialog():
     """
     Zeigt die Items des aktuellen Benutzers in einem Dialogfenster.
@@ -187,17 +186,26 @@ def show_user_items_dialog():
     with ui.dialog() as dialog:
         with ui.card():
             ui.label('🎒 Deine Items').classes('text-2xl font-bold text-center mb-4')
+
             if items:
-                with ui.grid(columns=3).classes('gap-4'):
+                with ui.row().classes('justify-center flex-wrap gap-6'):
                     for name, path in items:
-                        with ui.column().classes('items-center'):
-                            ui.image(f'/images/{path}').classes('w-24 h-24 rounded-full shadow-lg')
-                            ui.label(name).classes('text-sm text-gray-700')
+                        # Bildpfad mit "/images/" ergänzen
+                        full_path = f'/images/{path}'
+                        print(f"DEBUG: Lade Bild mit Pfad: {full_path}")  # Debug-Ausgabe
+
+                        with ui.column().classes('items-center gap-2'):
+                            ui.image(full_path).classes(
+                                'w-24 h-24 object-contain rounded-full border border-gray-300 shadow-sm'
+                            )
+                            ui.label(name).classes('text-center font-bold text-gray-700 text-sm')
             else:
                 ui.label('Du hast noch keine Items gesammelt.').classes('text-gray-500 text-center')
-            ui.button('Schließen', on_click=dialog.close).classes('mt-4 bg-red-500 text-white rounded-lg')
+
+            ui.button('Schließen', on_click=dialog.close).classes('mt-4 bg-blue-500 text-white rounded-lg')
 
         dialog.open()
+
 
 def show_switch_user_dialog():
     """

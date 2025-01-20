@@ -137,11 +137,10 @@ def refresh_user_data(user_id):
 
 def update_user_xp_and_level(user_id, xp_gain):
     """
-    Aktualisiert die XP und das Level eines Benutzers und fügt ggf. ein Level-Up-Belohnungsitem hinzu.
+    Aktualisiert die XP und das Level eines Benutzers. Belohnungen gibt es nur bei einem Level-Up.
     """
     try:
         database, cursor = get_database_cursor()
-
         cursor.execute('SELECT xp, level, rasse FROM users WHERE user_id = ?', (user_id,))
         user = cursor.fetchone()
 
@@ -156,13 +155,16 @@ def update_user_xp_and_level(user_id, xp_gain):
         new_xp = current_xp + xp_gain
         new_level = current_level
 
+        # Prüfen, ob ein Level-Up erreicht wird
         if new_xp >= 3:
             new_level += 1
             new_xp -= 3
             print(f"DEBUG: Level-Up! Neues Level: {new_level}, Rest-XP: {new_xp}")
 
+        # Update in der Datenbank
         cursor.execute('UPDATE users SET xp = ?, level = ? WHERE user_id = ?', (new_xp, new_level, user_id))
 
+        # Belohnung nur bei einem Level-Up
         if new_level > current_level:
             cursor.execute('SELECT item_id, name, path FROM items WHERE rasse = ? AND level = ?', (rasse, new_level))
             item = cursor.fetchone()
@@ -171,15 +173,17 @@ def update_user_xp_and_level(user_id, xp_gain):
                 cursor.execute('INSERT INTO user_items (user_id, item_id) VALUES (?, ?)', (user_id, item_id))
                 print(f"DEBUG: Belohnung hinzugefügt: {item_name} (ID: {item_id})")
 
+                # Belohnung anzeigen
                 with ui.dialog() as dialog, ui.card():
                     ui.label(f'Belohnung erhalten: {item_name}').classes('text-bold')
-                    ui.image(item_path).classes('w-64 h-64')
+                    ui.image(f'/images/{item_path}').classes('w-64 h-64')
                     ui.button('Schließen', on_click=dialog.close)
                     dialog.open()
 
         commit_and_close(database)
         print(f"DEBUG: Nachher - XP: {new_xp}, Level: {new_level}")
 
+        # UI aktualisieren
         refresh_user_data(user_id)
 
     except Exception as e:

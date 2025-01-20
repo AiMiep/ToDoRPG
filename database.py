@@ -105,17 +105,17 @@ def create_table():
 
     # Items einfügen
     cursor.execute('SELECT COUNT(*) FROM items')
-    if cursor.fetchone()[0] == 0:
+    if cursor.fetchone()[0] == 0:  # Wenn keine Items existieren
         items = [
-            ("Paint", "images/items/painter-paint.jpg", "Maler/in", 1),
-            ("Brushes", "images/items/painter-brushes.jpg", "Maler/in", 2),
-            ("SketchBook", "images/items/painter-sketchbook.jpg", "Maler/in", 3),
-            ("Sugar and Salt", "images/items/baker-sugerandsalt.jpg", "Bäcker/in", 1),
-            ("Oven Mitt", "images/items/baker-ovenmitt.jpg", "Bäcker/in", 2),
-            ("Mixer", "images/items/baker-mixer.jpg", "Bäcker/in", 3),
-            ("Spell Book", "images/items/witch-book.jpg", "Zauberer/in", 1),
-            ("Potion", "images/items/witch-potion.jpg", "Zauberer/in", 2),
-            ("Wizard Hat", "images/items/witch-hat.jpg", "Zauberer/in", 3),
+            ("Paint", "items/painter-paint.jpg", "Maler/in", 1),
+            ("Brushes", "items/painter-brushes.jpg", "Maler/in", 2),
+            ("SketchBook", "items/painter-sketchbook.jpg", "Maler/in", 3),
+            ("Sugar and Salt", "items/baker-sugerandsalt.jpg", "Bäcker/in", 1),
+            ("Oven Mitt", "items/baker-oven mitt.jpg", "Bäcker/in", 2),
+            ("Mixer", "items/baker-mixer.jpg", "Bäcker/in", 3),
+            ("Spell Book", "items/witch-book.jpg", "Zauberer/in", 1),
+            ("Potion", "items/witch-potion.jpg", "Zauberer/in", 2),
+            ("Wizard Hat", "items/witch-hat.jpg", "Zauberer/in", 3),
         ]
         cursor.executemany('INSERT INTO items (name, path, rasse, level) VALUES (?, ?, ?, ?)', items)
         print("Items wurden erfolgreich zur Datenbank hinzugefügt.")
