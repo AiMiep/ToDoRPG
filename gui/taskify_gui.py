@@ -5,12 +5,13 @@ from user import initialize_user
 
 user_id = 1
 
+
 @ui.page('/startpage')
 def show_startpage():
     ui.add_head_html("""
     <style>
         body {
-            background-image: url('images/kirby.gif'); /* Replace with your image URL */
+            background-image: url('images/kirby.gif');
             background-size: cover;
             background-position: center;
             margin: 0;
@@ -38,6 +39,7 @@ def show_startpage():
     ui.label('MADE BY THE BEST FROM THE BEST').style(
         'font-size: 20px; color: white; font-weight: bold; font-style: italic;').classes('w-full absolute bottom-4')
 
+
 def check_user_and_redirect():
     database, cursor = get_database_cursor()
     cursor.execute("SELECT COUNT(*) FROM users")
@@ -50,26 +52,28 @@ def check_user_and_redirect():
         ui.run_javascript('window.location.href="/create_user"')
 
 
-
 @ui.page('/homepage')
 def show_main_menu():
-    ui.label('Taskify').style('text-align: center; width: 100%; font-size: 32px; font-weight: bold;')
+    ui.add_head_html("""
+    <style>
+        body {
+            background-image: url('images/mario.gif');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            font-family: "Courier New", Courier, monospace;
+            overflow: hidden;
+        }
+    </style>
+    """)
 
-    ui.highchart({
-        'title': {'text': 'Status-Statisik'},
-        'chart': {'type': 'bar'},
-        'xAxis': {'categories': ['Erstellt', 'In Bearbeitung', 'Beendet']},
-        'yAxis': {'title': {'text': 'Anzahl der Aufgaben'}},
-        'series': [
-            {'name': 'Aufgaben',
-             'data': [get_task_status_counts(user_id)['Erstellt'], get_task_status_counts(user_id)['In Bearbeitung'],
-                      get_task_status_counts(user_id)['Beendet']]},
-        ],
-    }).classes('w-full h-60')
+    ui.label('Taskify').style('color: white; font-size: 160px; font-weight: bold; margin: 50px;')
 
-    ui.button('Neue Aufgabe erstellen',
-              on_click=lambda: ui.run_javascript("window.location.href = '/create_task';")).classes('w-full')
-    ui.button('Aufgaben anzeigen',
-              on_click=lambda: ui.run_javascript("window.location.href = '/show_tasks';")).classes('w-full')
-    ui.button('User Funktionen',
-              on_click=lambda: ui.run_javascript("window.location.href = '/user_functions';")).classes('w-full')
+    ui.button('Aufgaben Funktionen', color='white',
+              on_click=lambda: ui.run_javascript("window.location.href = '/show_tasks';")).style(
+        'font-weight: bold; font-size: 40px; border-radius: 10px; color: black; width: 40%;')
+
+    ui.button('User Funktionen', color='white',
+              on_click=lambda: ui.run_javascript("window.location.href = '/user_functions';")).style(
+        'font-weight: bold; font-size: 40px; border-radius: 10px; color: black; width: 40%;')
+
