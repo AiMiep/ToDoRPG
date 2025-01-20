@@ -15,27 +15,28 @@ def show_startpage():
             background-position: center;
             margin: 0;
             font-family: "Courier New", Courier, monospace;
+            overflow: hidden;
         }
     </style>
     """)
 
     ui.label('TASKIFY').style(
-        'font-weight: bold; font-size: 10vw; color: white; text-align: center;'
+        'font-weight: bold; font-size: 8vw; color: white; text-align: center;'
     ).classes('w-full')
 
     ui.label('Get something done!').style(
-        'text-align: center; color: white; font-size: 4vw; font-weight: bold;').classes('w-full')
+        'text-align: center; color: white; font-size: 4.5vw; font-weight: bold;').classes('w-full')
 
     ui.button(
         'START', color='black',
         on_click=lambda: check_user_and_redirect()
     ).style(
-        'display: block; margin: 0 auto; text-align: center; font-weight: bold;'
-        'font-size: 30px; padding: 20px 50px; border-radius: 15px; color: white;'
+        'display: block; margin: 7vh auto; text-align: center; font-weight: bold;'
+        'font-size: 3vw; padding: 3vh 6vw; border-radius: 2vh; color: white;'
     )
 
     ui.label('MADE BY THE BEST FROM THE BEST').style(
-        'font-size: 20px; color: white; font-weight: bold; font-style: italic;').classes('w-full absolute bottom-4')
+        'font-size: 2vw; color: white; font-weight: bold; font-style: italic;').classes('w-full absolute bottom-4')
 
 
 def check_user_and_redirect():
