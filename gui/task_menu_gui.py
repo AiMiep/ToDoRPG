@@ -30,7 +30,7 @@ def create_menu():
                 'border: 1px solid #d1d5db; padding: 0.5rem; width: 3rem; height: 3rem; display: flex; justify-content: center; align-items: center;')
 
             # Benutzereinstellungen-Button (Icon statt Text)
-            ui.button(icon='person', on_click=lambda: ui.run_javascript("location.href = '/functions'")) \
+            ui.button(icon='person', on_click=lambda: ui.run_javascript("location.href = '/user_functions'")) \
                 .classes('bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md') \
                 .style(
                 'border: 1px solid #d1d5db; padding: 0.5rem; width: 3rem; height: 3rem; display: flex; justify-content: center; align-items: center;')
