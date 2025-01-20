@@ -89,7 +89,6 @@ def nicegui_create_new_task():
             on_click=on_create_task
         ).style('background-color: #4CAF50; color: white; padding: 10px; border-radius: 8px;').classes('w-full mt-4')
 
-
 @ui.page('/show_tasks')
 def show_tasks_gui():
     ui.add_head_html("""
@@ -98,6 +97,8 @@ def show_tasks_gui():
             background-image: url('images/kirby.gif');
             background-size: cover;
             background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             margin: 0;
             font-family: "Courier New", Courier, monospace;
             overflow: hidden;
@@ -192,28 +193,22 @@ def show_tasks_gui():
         with ui.tab_panel(finished_tasks):
             tasks = list_finished_tasks(user_id)
             if tasks:
-                columns = [
-                    {'name': 'task_id', 'label': 'ID', 'field': 'task_id'},
-                    {'name': 'difficulty', 'label': 'Schwierigkeit', 'field': 'difficulty'},
-                    {'name': 'description', 'label': 'Beschreibung', 'field': 'description'},
-                    {'name': 'status', 'label': 'Status', 'field': 'status'},
-                    {'name': 'current_date', 'label': 'Erstellungsdatum', 'field': 'current_date'},
-                    {'name': 'deadline', 'label': 'Deadline', 'field': 'deadline'},
-                ]
+                with ui.row().classes('w-full text-center border-b border-gray-200 p-2'):
+                    ui.label("ID").classes('flex-1')
+                    ui.label("Schwierigkeit").classes('flex-1')
+                    ui.label("Beschreibung").classes('flex-1')
+                    ui.label("Erstellungsdatum").classes('flex-1')
+                    ui.label("Deadline").classes('flex-1')
+                    ui.label("Status").classes('flex-1')
 
-                rows = []
                 for task in tasks:
-                    row = {
-                        'task_id': task[0],
-                        'difficulty': task[1],
-                        'description': task[2],
-                        'status': task[3],
-                        'current_date': task[4],
-                        'deadline': task[5],
-                    }
-                    rows.append(row)
-
-                ui.table(columns=columns, rows=rows).classes('w-full')
+                    with ui.row().classes('w-full text-center border-b border-gray-200 p-2'):
+                        ui.label(task[0]).classes('flex-1')
+                        ui.label(task[1]).classes('flex-1')
+                        ui.label(task[2]).classes('flex-1')
+                        ui.label(task[4]).classes('flex-1')
+                        ui.label(task[5]).classes('flex-1')
+                        ui.label(task[3]).classes('flex-1')
             else:
-                ui.label("Keine abgeschlossenen Aufgaben.").classes('w-full text-center').style(
+                ui.label("Keine beendete Aufgaben.").classes('w-full text-center').style(
                     'color: #777; font-style: italic;')

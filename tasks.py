@@ -95,7 +95,7 @@ def update_task_status(user_id, task_id):
         cursor.execute('UPDATE tasks SET status = ? WHERE task_id = ? AND user_id = ?', (new_status, task_id, user_id))
         commit_and_close(database)
 
-    ui.run_javascript('window.location.href = "/show_tasks";')
+    ui.run_javascript("location.reload()")
 
 
 def get_task_status_counts(user_id):

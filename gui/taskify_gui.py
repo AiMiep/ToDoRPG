@@ -25,18 +25,18 @@ def show_startpage():
     ).classes('w-full')
 
     ui.label('Get something done!').style(
-        'text-align: center; color: white; font-size: 4.5vw; font-weight: bold;').classes('w-full')
+        'text-align: center; color: white; font-size: 3.5vw; font-weight: bold;').classes('w-full')
 
     ui.button(
         'START', color='black',
         on_click=lambda: check_user_and_redirect()
     ).style(
-        'display: block; margin: 7vh auto; text-align: center; font-weight: bold;'
-        'font-size: 3vw; padding: 3vh 6vw; border-radius: 2vh; color: white;'
+        'display: block; margin: 6.5vh auto; text-align: center; font-weight: bold;'
+        'font-size: 3vw; padding: 2vh 5vw; border-radius: 2vh; color: white;'
     )
 
     ui.label('MADE BY THE BEST FROM THE BEST').style(
-        'font-size: 2vw; color: white; font-weight: bold; font-style: italic;').classes('w-full absolute bottom-4')
+        'font-size: 1.5vw; color: white; font-weight: bold; font-style: italic;').classes('w-full absolute bottom-4')
 
 
 def check_user_and_redirect():
@@ -44,10 +44,8 @@ def check_user_and_redirect():
     cursor.execute("SELECT COUNT(*) FROM users")
 
     if initialize_user():
-        # Benutzer existiert: Hauptmenü laden
         ui.run_javascript('window.location.href="/homepage"')
     else:
-        # Kein Benutzer vorhanden: Benutzererstellung laden
         ui.run_javascript('window.location.href="/create_user"')
 
 
@@ -61,27 +59,25 @@ def show_main_menu():
             background-position: center;
             margin: 0;
             font-family: "Courier New", Courier, monospace;
-            overflow: hidden;
         }
     </style>
     """)
 
-    ui.label('MENU').style('color: white; font-size: 140px; font-weight: bold; margin: 50px;')
+    ui.label('MENU').style('color: white; font-size: 7vw; font-weight: bold; margin: 2vh;')
 
-    button_style = 'font-weight: bold; font-size: 30px; border-radius: 10px; color: black; width: 40%; padding: 20px; margin-left: 50px'
+    button_style = (
+        'font-weight: bold; font-size: 2.5vw; border-radius: 2vh; color: black; '
+        'width: 40%; padding: 2vh; display: block;'
+    )
 
-    ui.button('Aufgaben Funktionen', icon='checklist', color='white',
+    ui.button('Aufgaben Funktionen', icon='checklist', color='rgba(255, 255, 255, 0.8)',
               on_click=lambda: ui.run_javascript("window.location.href = '/show_tasks';")
               ).style(button_style)
 
-    ui.button('User Funktionen', icon='face', color='white',
+    ui.button('User Funktionen', icon='face', color='rgba(255, 255, 255, 0.8)',
               on_click=lambda: ui.run_javascript("window.location.href = '/user_functions';")
               ).style(button_style)
 
-    ui.button('Einstellungen', icon='settings', color='white',
-              on_click=lambda: ui.run_javascript("window.location.href = '/error_page';")
-              ).style(button_style)
-
-    ui.button('Beenden', icon='logout', color='white',
+    ui.button('Beenden', icon='logout', color='rgba(255, 255, 255, 0.8)',
               on_click=lambda: ui.run_javascript("window.location.href = '/startpage';")
               ).style(button_style)
