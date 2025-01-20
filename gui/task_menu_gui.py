@@ -6,39 +6,35 @@ from tasks import create_new_task, get_valid_date, list_all_tasks, list_finished
 
 user_id = 1
 
+def navbar_gui():
+    with ui.row().style(
+            'background-color: white; padding: 18px; '
+            'display: flex; justify-content: flex-end;'
+            'border-bottom: 10px solid #d1d5db; border-radius: 30px;').classes('w-full'):
 
-def create_menu():
-    with ui.row().classes('w-full bg-gray-100 text-gray-800 p-4 justify-between items-center') \
-            .style('border-bottom: 1px solid #d1d5db; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);'):
+        with ui.row().style('display: flex; margin-right: 50px'):
+            ui.button(icon='home', on_click=lambda: ui.run_javascript("location.href = '/homepage'")).style('padding: 10px 20px;')
+            ui.button(icon='list_alt', on_click=lambda: ui.run_javascript("location.href = '/show_tasks'")).style('padding: 10px 20px;')
+            ui.button(icon='add', on_click=lambda: ui.run_javascript("location.href = '/create_task'")).style('padding: 10px 20px;')
+            ui.button(icon='person', on_click=lambda: ui.run_javascript("location.href = '/user_functions'")).style('padding: 10px 20px;')
 
-        with ui.row():
-            ui.label('Taskify').classes('text-xl font-bold').style('color: #4B5563;')
 
-        with ui.row():
-            ui.button(icon='home', on_click=lambda: ui.run_javascript("location.href = '/homepage'")) \
-                .classes('bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md') \
-                .style('border: 1px solid #d1d5db; padding: 0.5rem; width: 3rem; height: 3rem; display: flex; justify-content: center; align-items: center;')
-
-            ui.button(icon='list_alt', on_click=lambda: ui.run_javascript("location.href = '/show_tasks'")) \
-                .classes('bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md') \
-                .style(
-                'border: 1px solid #d1d5db; padding: 0.5rem; width: 3rem; height: 3rem; display: flex; justify-content: center; align-items: center;')
-
-            ui.button(icon='add', on_click=lambda: ui.run_javascript("location.href = '/create_task'")) \
-                .classes('bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md') \
-                .style(
-                'border: 1px solid #d1d5db; padding: 0.5rem; width: 3rem; height: 3rem; display: flex; justify-content: center; align-items: center;')
-
-            # Benutzereinstellungen-Button (Icon statt Text)
-            ui.button(icon='person', on_click=lambda: ui.run_javascript("location.href = '/user_functions'")) \
-                .classes('bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md') \
-                .style(
-                'border: 1px solid #d1d5db; padding: 0.5rem; width: 3rem; height: 3rem; display: flex; justify-content: center; align-items: center;')
-
+@ui.page('/error_page')
+def error_page_gui():
+    ui.add_head_html("""
+     <style>
+         body {
+             background-image: url('images/error.gif');
+             background-size: cover;
+             background-position: center;
+             margin: 0;
+         }
+     </style>
+     """)
 
 @ui.page('/create_task')
 def nicegui_create_new_task():
-    create_menu()
+    navbar_gui()
 
     with ui.card().classes('w-full max-w-xl mx-auto p-4 shadow-lg'):
         description_input = ui.input(
@@ -95,18 +91,28 @@ def nicegui_create_new_task():
 
 
 @ui.page('/show_tasks')
-def show_tasks_page():
-    create_menu()
+def show_tasks_gui():
+    ui.add_head_html("""
+    <style>
+        body {
+            background-image: url('images/kirby.gif');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            font-family: "Courier New", Courier, monospace;
+            overflow: hidden;
+        }
+    </style>
+    """)
 
-    ui.label('Aufgaben anzeigen').style('text-align: center; width: 100%; font-size: 32px; font-weight: bold;')
+    navbar_gui()
 
-    with ui.tabs().classes('w-full justify-center') as tabs:
-        open_tasks = ui.tab('Offene Aufgaben').classes('flex-1 text-center')
-        all_tasks = ui.tab('Alle Aufgaben').classes('flex-1 text-center')
-        finished_tasks = ui.tab('Abgeschlossene Aufgaben').classes('flex-1 text-center')
+    with ui.tabs().classes('w-full').style('color: white;') as tabs:
+        open_tasks = ui.tab('Offene Aufgaben').classes('flex-1').style('font-size: 200px;')
+        all_tasks = ui.tab('Alle Aufgaben').classes('flex-1')
+        finished_tasks = ui.tab('Abgeschlossene Aufgaben').classes('flex-1')
 
-    with ui.tab_panels(tabs, value=open_tasks).classes('w-full').style('min-height: 500px;'):
-
+    with ui.tab_panels(tabs, value=open_tasks).classes('w-full'):
         # Offene Aufgaben
         with ui.tab_panel(open_tasks):
             tasks = list_all_open_tasks(user_id)
@@ -127,7 +133,7 @@ def show_tasks_page():
                         ui.label(task[5]).classes('flex-1')  # Deadline
                         ui.label(task[3]).classes('flex-1')  # Status
 
-                        with ui.row().classes('flex-2 justify-center gap-2'):
+                        with ui.row().classes('flex-1 justify-center gap-2'):
                             with ui.dialog() as dialog, ui.card():
                                 ui.label('Änderungen: ')
                                 description_input = ui.input(label="Beschreibung").classes('w-full')

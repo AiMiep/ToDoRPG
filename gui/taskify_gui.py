@@ -1,6 +1,5 @@
 from nicegui import ui
-from database import get_database_cursor, commit_and_close
-from tasks import get_task_status_counts
+from database import get_database_cursor
 from user import initialize_user
 
 user_id = 1
@@ -67,13 +66,22 @@ def show_main_menu():
     </style>
     """)
 
-    ui.label('Taskify').style('color: white; font-size: 160px; font-weight: bold; margin: 50px;')
+    ui.label('MENU').style('color: white; font-size: 140px; font-weight: bold; margin: 50px;')
 
-    ui.button('Aufgaben Funktionen', color='white',
-              on_click=lambda: ui.run_javascript("window.location.href = '/show_tasks';")).style(
-        'font-weight: bold; font-size: 40px; border-radius: 10px; color: black; width: 40%;')
+    button_style = 'font-weight: bold; font-size: 30px; border-radius: 10px; color: black; width: 40%; padding: 20px; margin-left: 50px'
 
-    ui.button('User Funktionen', color='white',
-              on_click=lambda: ui.run_javascript("window.location.href = '/user_functions';")).style(
-        'font-weight: bold; font-size: 40px; border-radius: 10px; color: black; width: 40%;')
+    ui.button('Aufgaben Funktionen', icon='checklist', color='white',
+              on_click=lambda: ui.run_javascript("window.location.href = '/show_tasks';")
+              ).style(button_style)
 
+    ui.button('User Funktionen', icon='face', color='white',
+              on_click=lambda: ui.run_javascript("window.location.href = '/user_functions';")
+              ).style(button_style)
+
+    ui.button('Einstellungen', icon='settings', color='white',
+              on_click=lambda: ui.run_javascript("window.location.href = '/error_page';")
+              ).style(button_style)
+
+    ui.button('Beenden', icon='logout', color='white',
+              on_click=lambda: ui.run_javascript("window.location.href = '/startpage';")
+              ).style(button_style)
