@@ -15,17 +15,16 @@ def show_startpage():
             background-position: center;
             margin: 0;
             font-family: "Courier New", Courier, monospace;
-            overflow: hidden;
         }
     </style>
     """)
 
     ui.label('TASKIFY').style(
-        'font-weight: bold; font-size: 170px; color: white; text-align: center;'
+        'font-weight: bold; font-size: 10vw; color: white; text-align: center;'
     ).classes('w-full')
 
     ui.label('Get something done!').style(
-        'text-align: center; color: white; font-size: 50px; font-weight: bold;').classes('w-full')
+        'text-align: center; color: white; font-size: 4vw; font-weight: bold;').classes('w-full')
 
     ui.button(
         'START', color='black',

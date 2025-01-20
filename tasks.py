@@ -168,6 +168,6 @@ def delete_task(user_id, task_id):
         cursor.execute('DELETE FROM tasks WHERE task_id = ? AND user_id = ?', (task_id, user_id))
         commit_and_close(database)
         ui.notify("Aufgabe erfolgreich gelöscht.")
-        ui.run_javascript('window.location.href = "/show_tasks";')
+        ui.run_javascript("location.reload()")
     else:
         ui.notify("Aufgabe nicht gefunden.")
