@@ -7,31 +7,22 @@ app.add_static_files('/images', os.path.join(os.getcwd(), 'images'))
 
 # Hintergrund-GIFs oder Bilder für Rassen
 RACE_TO_BACKGROUND_GIF = {
-    "Menschen (Pokémon & Animal Crossing)": "backgroundGif/AC-P-BackgroundGif.gif",
-    "Goronen/Zoras/Rito/Gerudo (Zelda)": "backgroundGif/Z-BackgroundGif.gif",
-    "Dorfbewohner (Animal Crossing)": "backgroundGif/AC-BackgroundGif.gif",
-    "Pokémon-Trainer (Pokémon)": "backgroundGif/P-BackgroundGif.gif"
+    "Mensch (Mario Bros)": "backgroundGif/M-Background.gif",
+    "Goronen/Zoras/Rito/Gerudo (Zelda)": "backgroundGif/Z-Background.gif",
+    "Pokémon-Trainer (Pokémon)": "backgroundGif/P-Background.gif"
 }
 
 # Klassen für jede Rasse
 RACE_TO_CLASSES = {
-    "Menschen (Pokémon & Animal Crossing)": [
-        "🛍️ Händler (Animal Crossing)",
-        "🏗️ Baumeister (Animal Crossing)",
-        "🌿 Gärtner (Animal Crossing)",
-        "⚔️ Trainer (Pokémon)",
-        "🌲 Ranger (Pokémon)",
-        "🥊 Kampfkünstler (Pokémon)"
+    "Mensch (Mario Bros)": [
+        "🦸 Held (Mario)",
+        "🦹 Schurke (Waluigi)",
+        "👸 Prinzessin (Peach)"
     ],
     "Goronen/Zoras/Rito/Gerudo (Zelda)": [
         "🗡️ Held (Zelda)",
         "🏹 Bogenschütze (Zelda)",
         "📜 Gelehrter (Magier, Zelda)"
-    ],
-    "Dorfbewohner (Animal Crossing)": [
-        "🛍️ Händler (Animal Crossing)",
-        "🏗️ Baumeister (Animal Crossing)",
-        "🌿 Gärtner (Animal Crossing)"
     ],
     "Pokémon-Trainer (Pokémon)": [
         "⚔️ Trainer (Pokémon)",
@@ -43,26 +34,35 @@ RACE_TO_CLASSES = {
 # Avatare für jede Kategorie
 def get_avatars_by_race(race):
     avatars = {
-        "Animal Crossing": [
-            {"id": 1, "name": "Händler", "path": "newAvatars/AC-Haendler.png"},
-            {"id": 2, "name": "Baumeister", "path": "newAvatars/AC-Baumeister.png"},
-            {"id": 3, "name": "Gärtner", "path": "newAvatars/AC-Gaertner.png"}
+        "Mensch (Mario Bros)": [
+            {"id": 10, "name": "Mario", "path": "newAvatars/M-Mario.jpg"},
+            {"id": 11, "name": "Waluigi", "path": "newAvatars/M-Waluigi.jpg"},
+            {"id": 12, "name": "Peach", "path": "newAvatars/M-Peach.jpg"}
         ],
-        "Pokémon": [
-            {"id": 4, "name": "Trainer", "path": "newAvatars/P-Trainer.jpg"},
-            {"id": 5, "name": "Ranger", "path": "newAvatars/P-Ranger.jpg"},
-            {"id": 6, "name": "Kampfkünstler", "path": "newAvatars/P-Brawler.jpg"}
-        ],
-        "Zelda": [
+        "Goronen/Zoras/Rito/Gerudo (Zelda)": [
             {"id": 7, "name": "Held", "path": "newAvatars/Z-Held.jpg"},
             {"id": 8, "name": "Bogenschütze", "path": "newAvatars/Z-Bogen.jpg"},
             {"id": 9, "name": "Gelehrter", "path": "newAvatars/Z-Gelehrter.jpg"}
         ],
-        "Default": [
-            {"id": 1, "name": "Standard", "path": "newAvatars/Default.png"}
+        "Pokémon-Trainer (Pokémon)": [
+            {"id": 4, "name": "Trainer", "path": "newAvatars/P-Trainer.jpg"},
+            {"id": 5, "name": "Ranger", "path": "newAvatars/P-Ranger.jpg"},
+            {"id": 6, "name": "Kampfkünstler", "path": "newAvatars/P-Brawler.jpg"}
         ]
     }
-    return avatars.get(race, avatars["Default"])
+    return avatars.get(race, [])
+
+# CSS zur Entfernung von Rändern und für einen nahtlosen Hintergrund
+ui.add_head_html("""
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden; /* Verhindert Scrollen */
+    }
+</style>
+""")
 
 @ui.page('/create_user')
 def user_creation_page():
@@ -74,32 +74,32 @@ def user_creation_page():
         ui.notify(f'Du hast den Avatar mit ID {avatar_id} ausgewählt!')
 
     # Haupt-Container mit dynamischem Hintergrund
-    with ui.column().classes('min-h-screen w-screen justify-start items-center') as page_container:
-        page_container.style('background-image: url("backgroundGif/DefaultBackgroundGif.gif"); background-size: cover; background-position: center;')
+    with ui.column().classes('min-h-screen w-screen justify-center items-center') as page_container:
+        page_container.style('background-image: url("/images/backgroundGif/M-Background.gif");'
+                             'background-size: cover; background-position: center;')
 
-        with ui.card().classes('bg-gray-100 bg-opacity-80 shadow-lg border-black border rounded-lg w-11/12 sm:w-3/4 md:w-2/3 p-8 mt-6'):
+        with ui.card().classes('bg-gray-100 bg-opacity-80 shadow-lg border-black border rounded-lg w-11/12 sm:w-3/4 md:w-1/2 lg:w-1/3 p-6 mt-6'):
             ui.label('🌟 Charaktererstellung 🌟').classes('text-2xl sm:text-3xl font-bold text-black text-center mt-4')
-            ui.label('Gestalte deinen Helden und wähle deinen Avatar!').classes('text-sm text-gray-700 text-center mb-6')
+            ui.label('Gestalte deinen Helden und wähle deinen Avatar!').classes('text-sm text-gray-700 text-center mb-4')
 
-            with ui.column().classes('w-full items-center gap-4'):
+            with ui.column().classes('w-full items-center gap-3'):
                 ui.label('🔤 Dein Heldname').classes('text-lg font-bold text-black text-center')
-                username = ui.input(placeholder='z. B. Ash oder Zelda').classes('w-full text-sm')
+                username = ui.input(placeholder='z. B. Mario oder Zelda').classes('w-full text-sm')
 
                 # Rassenauswahl mit `on_change` direkt integriert
-                ui.label('🧝 Wähle eine Rasse').classes('text-lg font-bold text-black text-center mt-4')
+                ui.label('🧝 Wähle eine Rasse').classes('text-lg font-bold text-black text-center mt-3')
                 rasse = ui.radio(
                     [
-                        "Menschen (Pokémon & Animal Crossing)",
+                        "Mensch (Mario Bros)",
                         "Goronen/Zoras/Rito/Gerudo (Zelda)",
-                        "Dorfbewohner (Animal Crossing)",
                         "Pokémon-Trainer (Pokémon)"
                     ],
-                    value="Menschen (Pokémon & Animal Crossing)",
+                    value="Mensch (Mario Bros)",
                     on_change=lambda: update_page_elements(rasse.value)
                 ).classes('text-sm')
 
-                ui.label('🏹 Wähle eine Klasse').classes('text-lg font-bold text-black text-center mt-4')
-                class_container = ui.column().classes('w-full items-center gap-4')  # Container für Klassen
+                ui.label('🏹 Wähle eine Klasse').classes('text-lg font-bold text-black text-center mt-3')
+                class_container = ui.column().classes('w-full items-center gap-3')  # Container für Klassen
                 klasse = ui.radio([])  # Leere Optionen initialisieren
 
             avatar_container = ui.row().classes('justify-center flex-wrap gap-6 mt-4')
@@ -115,29 +115,20 @@ def user_creation_page():
         nonlocal avatar_container, class_container
 
         # Aktualisiere den Hintergrund
-        background_path = RACE_TO_BACKGROUND_GIF.get(selected_race, "backgroundGif/DefaultBackgroundGif.gif")
-        page_container.style(f'background-image: url("/images/{background_path}"); background-size: cover; background-position: center;')
+        background_path = RACE_TO_BACKGROUND_GIF.get(selected_race, "backgroundGif/M-Background.gif")
+        page_container.style(f'background-image: url("/images/{background_path}"); background-size: cover;'
+                             'background-position: center;')
 
         # Lade Avatare basierend auf der Rasse
-        race_to_category = {
-            "Menschen (Pokémon & Animal Crossing)": "Animal Crossing",
-            "Goronen/Zoras/Rito/Gerudo (Zelda)": "Zelda",
-            "Dorfbewohner (Animal Crossing)": "Animal Crossing",
-            "Pokémon-Trainer (Pokémon)": "Pokémon"
-        }
-        selected_race_category = race_to_category.get(selected_race, "Default")
-        avatars = get_avatars_by_race(selected_race_category)
-
+        avatars = get_avatars_by_race(selected_race)
         avatar_container.clear()
-        # Avatare-Container
-        avatar_container = ui.row().classes('justify-center flex-wrap gap-6 mt-4')
+        avatar_container = ui.row().classes('justify-center flex-wrap gap-4 mt-4')
         with avatar_container:
             for avatar in avatars:
-                # Vertikale Ausrichtung für Avatar-Bild, Text und Button
                 with ui.column().classes('items-center justify-center gap-2') \
-                        .style('text-align: center; width: 8rem;'):
+                        .style('text-align: center; width: 7rem;'):
                     ui.image(f'/images/{avatar["path"]}').classes(
-                        'w-24 h-24 object-cover rounded-full border border-gray-300 shadow-sm'
+                        'w-20 h-20 object-cover rounded-full border border-gray-300 shadow-sm'
                     )
                     ui.label(avatar['name']).classes('text-center font-bold text-gray-700 text-sm')
                     ui.button(
@@ -152,7 +143,7 @@ def user_creation_page():
             klasse.value = classes[0] if classes else None
             klasse.options = classes
 
-    update_page_elements("Menschen (Pokémon & Animal Crossing)")
+    update_page_elements("Mensch (Mario Bros)")
 
     def create_user_action(username, rasse, klasse, selected_avatar, progress):
         if not username.value or not rasse.value or not klasse.value or not selected_avatar['id']:

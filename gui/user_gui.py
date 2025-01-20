@@ -11,20 +11,15 @@ app.add_static_files('/images', os.path.join(os.getcwd(), 'images'))
 
 # Avatare für jede Kategorie
 RACE_TO_AVATARS = {
-    "Menschen (Pokémon & Animal Crossing)": [
-        {"id": 1, "name": "Händler", "path": "newAvatars/AC-Haendler.png"},
-        {"id": 2, "name": "Baumeister", "path": "newAvatars/AC-Baumeister.png"},
-        {"id": 3, "name": "Gärtner", "path": "newAvatars/AC-Gaertner.png"}
+    "Mensch (Mario Bros)": [
+        {"id": 1, "name": "Held", "path": "newAvatars/M-Mario.jpg"},
+        {"id": 2, "name": "Schurke", "path": "newAvatars/M-Waluigi.jpg"},
+        {"id": 3, "name": "Prinzessin", "path": "newAvatars/M-Peach.jpg"}
     ],
     "Goronen/Zoras/Rito/Gerudo (Zelda)": [
         {"id": 7, "name": "Held", "path": "newAvatars/Z-Held.jpg"},
         {"id": 8, "name": "Bogenschütze", "path": "newAvatars/Z-Bogen.jpg"},
         {"id": 9, "name": "Gelehrter", "path": "newAvatars/Z-Gelehrter.jpg"}
-    ],
-    "Dorfbewohner (Animal Crossing)": [
-        {"id": 1, "name": "Händler", "path": "newAvatars/AC-Haendler.png"},
-        {"id": 2, "name": "Baumeister", "path": "newAvatars/AC-Baumeister.png"},
-        {"id": 3, "name": "Gärtner", "path": "newAvatars/AC-Gaertner.png"}
     ],
     "Pokémon-Trainer (Pokémon)": [
         {"id": 4, "name": "Trainer", "path": "newAvatars/P-Trainer.jpg"},
@@ -111,7 +106,6 @@ def change_user_avatar(avatar_id):
     global user_id
     update_user_avatar(user_id, avatar_id)
 
-    # Dialog anzeigen, bevor die Seite neu geladen wird
     avatar_path = get_avatar_path_by_id(avatar_id)
     if avatar_path:
         with ui.dialog() as dialog:
@@ -151,6 +145,8 @@ def show_user_status_dialog():
                 ui.label(f'💎 XP: {xp}').classes('text-lg text-gray-700')
                 ui.button('Schließen', on_click=dialog.close).classes('mt-4 bg-blue-500 text-white rounded-lg')
             dialog.open()
+
+# Weitere Funktionen: `show_all_users_dialog`, `show_user_items_dialog`, `show_switch_user_dialog`...
 
 
 def show_all_users_dialog():
