@@ -6,6 +6,7 @@ from tasks import create_new_task, get_valid_date, list_all_tasks, list_finished
 
 user_id = 1
 
+
 def navbar_gui():
     with ui.row().style(
             'padding: 18px; '
@@ -30,23 +31,28 @@ def navbar_gui():
                               'border-radius: 130px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);')
 
 
-@ui.page('/error_page')
-def error_page_gui():
-    ui.add_head_html("""
-     <style>
-         body {
-             background-image: url('images/error.gif');
-             background-size: cover;
-             background-position: center;
-             margin: 0;
-         }
-     </style>
-     """)
+def navbar_add_task_gui():
+    with ui.row().style(
+            'padding: 18px; '
+            'display: flex; justify-content: space-between; align-items: center; '
+            'border-bottom: 4px double white;'
+    ).classes('w-full'):
+        with ui.row().style('display: flex; margin-left: 20px;'):
+            ui.button('Zurück zur Aufgabenübersicht', icon='list_alt', color='black',
+                      on_click=lambda: ui.run_javascript("location.href = '/show_tasks'")
+                      ).style('color: white; padding: 10px 20px; font-size: 16px; font-weight: bold; '
+                              'border-radius: 130px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);')
+
+        with ui.row().style('display: flex; margin-right: 20px;'):
+            ui.button('Weiter zum Menü', icon='home', color='black',
+                      on_click=lambda: ui.run_javascript("location.href = '/homepage'")
+                      ).style('color: white; padding: 10px 20px; font-size: 16px; font-weight: bold;'
+                              'border-radius: 30px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);')
 
 
 @ui.page('/create_task')
 def nicegui_create_new_task():
-    navbar_gui()
+    navbar_add_task_gui()
 
     with ui.card().classes('w-full max-w-xl mx-auto p-4 shadow-lg'):
         description_input = ui.input(
@@ -134,7 +140,7 @@ def show_tasks_gui():
             tasks = list_all_open_tasks(user_id)
             if tasks:
                 with ui.row().classes('w-full text-center p-2').style(
-                        'padding: 3vh; background-color: rgba(0, 0, 0, 0.9); border: 3px solid black; color: white; font-weight: bold; font-size: 1.2vw; border-radius: 10px'):
+                        'padding: 1.5vh; background-color: rgba(0, 0, 0, 0.9); border: 3px solid black; color: white; font-weight: bold; font-size: 1.2vw; border-radius: 15px'):
                     ui.label("Schwierigkeit").classes('flex-1')
                     ui.label("Beschreibung").classes('flex-1')
                     ui.label("Erstellungsdatum").classes('flex-1')
@@ -144,7 +150,7 @@ def show_tasks_gui():
 
                 for task in tasks:
                     with ui.row().classes('w-full text-center p-4').style(
-                            'border: 4px solid white; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); '
+                            'border: 4px solid white; border-radius: 15px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); '
                             'background-color: rgba(255, 255, 255, 0.9); '
                             'display: flex; align-items: center; justify-content: center;'):
                         ui.label(task[1]).classes('flex-1')  # Schwierigkeit
@@ -155,9 +161,11 @@ def show_tasks_gui():
 
                         with ui.row().classes('flex-1 justify-center gap-2'):
                             with ui.dialog() as dialog, ui.card().style('width: 50%'):
-                                ui.label('Datenänderungen:').style('font-size: 3vh; text-align: center; font-weight: bold;').classes('w-full')
+                                ui.label('Datenänderungen:').style(
+                                    'font-size: 3vh; text-align: center; font-weight: bold;').classes('w-full')
                                 description_input = ui.input(label="Neue Beschreibung").classes('w-full')
-                                deadline_input = ui.input(label="Neues Fälligkeitsdatum", placeholder="TT.MM.JJJJ").classes(
+                                deadline_input = ui.input(label="Neues Fälligkeitsdatum",
+                                                          placeholder="TT.MM.JJJJ").classes(
                                     'w-full')
                                 difficulty_input = ui.select(label="Neue Schwierigkeitsstufe",
                                                              options=["Leicht", "Mittel", "Schwer"]).classes('w-full')
@@ -167,16 +175,19 @@ def show_tasks_gui():
                                     'w-full')
                                 current_date_input.disable()
 
-                                with ui.row().classes('w-full justify-center gap-2'):
+                                with ui.row().classes('w-full justify-center gap-10'):
                                     ui.button('Speichern',
                                               on_click=partial(update_task_data, user_id, task[0], description_input,
                                                                deadline_input, difficulty_input))
                                     ui.button('Abbrechen', on_click=dialog.close)
 
-                            ui.button(icon='edit', color= '#AECBFA', on_click=dialog.open).classes('rounded').style('color: #1A73E8;')
-                            ui.button(icon='update', color= '#C8FACD', on_click=partial(update_task_status, user_id, task[0])).classes(
+                            ui.button(icon='edit', color='#AECBFA', on_click=dialog.open).classes('rounded').style(
+                                'color: #1A73E8;')
+                            ui.button(icon='update', color='#C8FACD',
+                                      on_click=partial(update_task_status, user_id, task[0])).classes(
                                 'rounded').style('color: #34A853;')
-                            ui.button(icon='delete', color= '#FBCEDB', on_click=partial(delete_task, user_id, task[0])).classes(
+                            ui.button(icon='delete', color='#FBCEDB',
+                                      on_click=partial(delete_task, user_id, task[0])).classes(
                                 'rounded').style('color: #EA4335;')
 
             else:
@@ -187,7 +198,8 @@ def show_tasks_gui():
         with ui.tab_panel(all_tasks):
             tasks = list_all_tasks(user_id)
             if tasks:
-                with ui.row().classes('w-full text-center border-b border-gray-200 p-2'):
+                with ui.row().classes('w-full text-center p-2').style(
+                        'padding: 1.5vh; background-color: rgba(0, 0, 0, 0.9); border: 3px solid black; color: white; font-weight: bold; font-size: 1.2vw; border-radius: 15px'):
                     ui.label("ID").classes('flex-1')
                     ui.label("Schwierigkeit").classes('flex-1')
                     ui.label("Beschreibung").classes('flex-1')
@@ -198,10 +210,11 @@ def show_tasks_gui():
                 for task in tasks:
                     task_status = task[3]
                     created_color = 'bg-red-100' if task_status.lower() == "erstellt" else ''
+                    started_color = 'bg-blue-100' if task_status.lower() == "in bearbeitung" else ''
                     finished_color = 'bg-green-100' if task_status.lower() == "beendet" else ''
 
-                    with ui.row().classes(
-                            f'w-full text-center border-b border-gray-200 p-2 {created_color} {finished_color}'):
+                    with ui.row().style('padding: 1.5vh; border-radius: 15px;').classes(
+                            f'w-full text-center border-b border-gray-200 p-2 {created_color} {started_color} {finished_color}'):
                         ui.label(task[0]).classes('flex-1')
                         ui.label(task[1]).classes('flex-1')
                         ui.label(task[2]).classes('flex-1')
@@ -217,24 +230,23 @@ def show_tasks_gui():
         with ui.tab_panel(finished_tasks):
             tasks = list_finished_tasks(user_id)
             if tasks:
-                with ui.row().classes('w-full text-center border-b border-gray-200 p-2').style(
-                        'background-color: white;'):
+                with ui.row().classes('w-full text-center p-2').style(
+                        'padding: 1.5vh; background-color: rgba(0, 0, 0, 0.9); border: 3px solid black; color: white; font-weight: bold; font-size: 1.2vw; border-radius: 15px'):
                     ui.label("ID").classes('flex-1')
                     ui.label("Schwierigkeit").classes('flex-1')
                     ui.label("Beschreibung").classes('flex-1')
                     ui.label("Erstellungsdatum").classes('flex-1')
                     ui.label("Deadline").classes('flex-1')
-                    ui.label("Status").classes('flex-1')
 
                 for task in tasks:
-                    with ui.row().classes('w-full text-center border-b border-gray-200 p-2').style(
-                            'background-color: white;'):
+                    with ui.row().style('padding: 1.5vh; background-color: rgba(255, 255, 255, 0.9); border-radius: 15px;').classes(
+                            f'w-full text-center border-b border-gray-200 p-2'):
                         ui.label(task[0]).classes('flex-1')
                         ui.label(task[1]).classes('flex-1')
                         ui.label(task[2]).classes('flex-1')
                         ui.label(task[4]).classes('flex-1')
                         ui.label(task[5]).classes('flex-1')
-                        ui.label(task[3]).classes('flex-1')
+
             else:
-                ui.label("Keine beendete Aufgaben.").classes('w-full text-center').style(
+                ui.label("Keine beendeten Aufgaben.").classes('w-full text-center').style(
                     'color: #777; font-style: italic;')
