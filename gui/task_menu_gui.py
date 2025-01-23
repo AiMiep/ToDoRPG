@@ -160,7 +160,7 @@ def show_tasks_gui():
                         ui.label(task[3]).classes('flex-1')  # Status
 
                         with ui.row().classes('flex-1 justify-center gap-2'):
-                            with ui.dialog() as dialog, ui.card().style('width: 50%'):
+                            with ui.dialog() as dialog_edit, ui.card().style('width: 50%'):
                                 ui.label('Datenänderungen:').style(
                                     'font-size: 3vh; text-align: center; font-weight: bold;').classes('w-full')
                                 description_input = ui.input(label="Neue Beschreibung").classes('w-full')
@@ -179,15 +179,26 @@ def show_tasks_gui():
                                     ui.button('Speichern',
                                               on_click=partial(update_task_data, user_id, task[0], description_input,
                                                                deadline_input, difficulty_input))
-                                    ui.button('Abbrechen', on_click=dialog.close)
+                                    ui.button('Abbrechen', on_click=dialog_edit.close)
 
-                            ui.button(icon='edit', color='#AECBFA', on_click=dialog.open).classes('rounded').style(
+                            ui.button(icon='edit', color='#AECBFA', on_click=dialog_edit.open).classes('rounded').style(
                                 'color: #1A73E8;')
                             ui.button(icon='update', color='#C8FACD',
                                       on_click=partial(update_task_status, user_id, task[0])).classes(
                                 'rounded').style('color: #34A853;')
+
+                            with ui.dialog() as dialog_delete, ui.card().style('width: 50%'):
+                                ui.label('Willst du die Aufgabe wirklich löschen?').style(
+                                    'font-size: 3vh; text-align: center; font-weight: bold;').classes('w-full')
+
+                                with ui.row().classes('w-full justify-center gap-10'):
+                                    ui.button('Ja',
+                                              on_click=partial(delete_task, user_id, task[0]))
+
+                                    ui.button('Nein', on_click=dialog_delete.close)
+
                             ui.button(icon='delete', color='#FBCEDB',
-                                      on_click=partial(delete_task, user_id, task[0])).classes(
+                                      on_click=dialog_delete.open).classes(
                                 'rounded').style('color: #EA4335;')
 
             else:
