@@ -150,14 +150,3 @@ def create_table():
 
     commit_and_close(database)
     print("Neue Items wurden erfolgreich hinzugefügt (nur fehlende Items).")
-
-
-def get_all_tasks(user_id):
-    """
-    Ruft alle Aufgaben für einen bestimmten Benutzer aus der Datenbank ab.
-    """
-    database, cursor = get_database_cursor()
-    cursor.execute('SELECT task_id, description, status, deadline FROM tasks WHERE user_id = ?', (user_id,))
-    tasks = cursor.fetchall()
-    commit_and_close(database)
-    return tasks
