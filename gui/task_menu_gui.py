@@ -9,26 +9,22 @@ user_id = 1
 
 def navbar_gui():
     with ui.row().style(
-            'padding: 18px; '
+            'background-color: rgba(0, 0, 0, 0.7); padding: 18px; '
             'display: flex; justify-content: space-between; align-items: center; '
             'border-bottom: 4px double white;'
     ).classes('w-full'):
         with ui.row().style('display: flex; margin-left: 20px;'):
-            ui.button('Zurück zum Menü', icon='home', color='black',
+            ui.button('Zurück zum Menü', icon='home', color='rgba(0, 0, 0, 0.7)',
                       on_click=lambda: ui.run_javascript("location.href = '/homepage'")
-                      ).style('color: white; padding: 10px 20px; font-size: 16px; font-weight: bold;'
-                              'border-radius: 30px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);')
-
-        with ui.row():
-            ui.label('Heute schon was erledigt?').style(
-                'font-size: 2vw; font-weight: bold; text-align: center; color: white')
+                      ).style('color: white; padding: 10px 20px; font-size: 2.5vh; font-weight: bold; '
+                              'border-radius: 130px;')
 
         # Rechter Bereich: Neue Aufgabe erstellen-Button
         with ui.row().style('display: flex; margin-right: 20px;'):
-            ui.button('Neue Aufgabe erstellen', icon='add', color='black',
+            ui.button('Neue Aufgabe erstellen', icon='add', color='rgba(0, 0, 0, 0.7)',
                       on_click=lambda: ui.run_javascript("location.href = '/create_task'")
-                      ).style('color: white; padding: 10px 20px; font-size: 16px; font-weight: bold; '
-                              'border-radius: 130px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);')
+                      ).style('color: white; padding: 10px 20px; font-size: 2.5vh; font-weight: bold; '
+                              'border-radius: 130px;')
 
 
 def navbar_add_task_gui():
@@ -121,14 +117,14 @@ def show_tasks_gui():
             background-repeat: no-repeat;
             margin: 0;
             font-family: "Courier New", Courier, monospace;
-            overflow: hidden;
         }
     </style>
     """)
 
     navbar_gui()
 
-    with ui.tabs().classes('w-full').style('color: white; font-size: 30px;') as tabs:
+    with ui.tabs().classes('w-full').style(
+            'color: white; background-color: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 15px;') as tabs:
         open_tasks = ui.tab('Offene Aufgaben').classes('flex-1')
         all_tasks = ui.tab('Alle Aufgaben').classes('flex-1')
         finished_tasks = ui.tab('Abgeschlossene Aufgaben').classes('flex-1')
@@ -140,7 +136,8 @@ def show_tasks_gui():
             tasks = list_all_open_tasks(user_id)
             if tasks:
                 with ui.row().classes('w-full text-center p-2').style(
-                        'padding: 1.5vh; background-color: rgba(0, 0, 0, 0.9); border: 3px solid black; color: white; font-weight: bold; font-size: 1.2vw; border-radius: 15px'):
+                        'padding: 1.5vh; background-color: rgba(0, 0, 0, 0.8); border: 3px solid black; color: white; '
+                        'font-weight: bold; font-size: 1.3vw; border-radius: 15px'):
                     ui.label("Schwierigkeit").classes('flex-1')
                     ui.label("Beschreibung").classes('flex-1')
                     ui.label("Erstellungsdatum").classes('flex-1')
@@ -150,8 +147,7 @@ def show_tasks_gui():
 
                 for task in tasks:
                     with ui.row().classes('w-full text-center p-4').style(
-                            'border: 4px solid white; border-radius: 15px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); '
-                            'background-color: rgba(255, 255, 255, 0.9); '
+                            'font-size: 1vw; border: 3px solid white; border-radius: 15px; color: white; backdrop-filter: blur(7.5px);'
                             'display: flex; align-items: center; justify-content: center;'):
                         ui.label(task[1]).classes('flex-1')  # Schwierigkeit
                         ui.label(task[2]).classes('flex-1')  # Beschreibung
@@ -210,7 +206,8 @@ def show_tasks_gui():
             tasks = list_all_tasks(user_id)
             if tasks:
                 with ui.row().classes('w-full text-center p-2').style(
-                        'padding: 1.5vh; background-color: rgba(0, 0, 0, 0.9); border: 3px solid black; color: white; font-weight: bold; font-size: 1.2vw; border-radius: 15px'):
+                        'padding: 1.5vh; background-color: rgba(0, 0, 0, 0.8); border: 3px solid black; color: white; '
+                        'font-weight: bold; font-size: 1.3vw; border-radius: 15px'):
                     ui.label("ID").classes('flex-1')
                     ui.label("Schwierigkeit").classes('flex-1')
                     ui.label("Beschreibung").classes('flex-1')
@@ -219,19 +216,31 @@ def show_tasks_gui():
                     ui.label("Status").classes('flex-1')
 
                 for task in tasks:
-                    task_status = task[3]
-                    created_color = 'bg-red-100' if task_status.lower() == "erstellt" else ''
-                    started_color = 'bg-blue-100' if task_status.lower() == "in bearbeitung" else ''
-                    finished_color = 'bg-green-100' if task_status.lower() == "beendet" else ''
+                    task_status = task[3].lower()
 
-                    with ui.row().style('padding: 1.5vh; border-radius: 15px;').classes(
-                            f'w-full text-center border-b border-gray-200 p-2 {created_color} {started_color} {finished_color}'):
+                    bg_color = (
+                        'rgba(255, 230, 230, 0.8)' if task_status == "erstellt" else  ''
+                        'rgba(230, 243, 255, 0.8)' if task_status == "in bearbeitung" else ''
+                        'rgba(230, 255, 235, 0.8)' if task_status == "beendet" else ''
+                    )
+
+                    border_color = (
+                        'red' if task_status == "erstellt" else  ''
+                        'blue' if task_status == "in bearbeitung" else ''
+                        'green' if task_status == "beendet" else ''
+                    )
+
+                    with ui.row().style(
+                            f'font-size: 1vw; background-color: {bg_color}; border-radius: 15px; color: black;'
+                            f'display: flex; align-items: center; justify-content: center; border: 4px solid {border_color}; '
+                    ).classes('w-full text-center p-2'):
                         ui.label(task[0]).classes('flex-1')
                         ui.label(task[1]).classes('flex-1')
                         ui.label(task[2]).classes('flex-1')
                         ui.label(task[4]).classes('flex-1')
                         ui.label(task[5]).classes('flex-1')
                         ui.label(task[3]).classes('flex-1')
+
 
             else:
                 ui.label("Keine Aufgaben.").classes('w-full text-center').style(
@@ -242,7 +251,8 @@ def show_tasks_gui():
             tasks = list_finished_tasks(user_id)
             if tasks:
                 with ui.row().classes('w-full text-center p-2').style(
-                        'padding: 1.5vh; background-color: rgba(0, 0, 0, 0.9); border: 3px solid black; color: white; font-weight: bold; font-size: 1.2vw; border-radius: 15px'):
+                        'padding: 1.5vh; background-color: rgba(0, 0, 0, 0.8); border: 3px solid black; color: white; '
+                        'font-weight: bold; font-size: 1.3vw; border-radius: 15px'):
                     ui.label("ID").classes('flex-1')
                     ui.label("Schwierigkeit").classes('flex-1')
                     ui.label("Beschreibung").classes('flex-1')
@@ -250,7 +260,9 @@ def show_tasks_gui():
                     ui.label("Deadline").classes('flex-1')
 
                 for task in tasks:
-                    with ui.row().style('padding: 1.5vh; background-color: rgba(255, 255, 255, 0.9); border-radius: 15px;').classes(
+                    with ui.row().style(
+                            'font-size: 1vw; border: 4px solid black; border-radius: 15px; background-color: rgba(255, 255, 255, 0.8); color: black;'
+                            'display: flex; align-items: center; justify-content: center;').classes(
                             f'w-full text-center border-b border-gray-200 p-2'):
                         ui.label(task[0]).classes('flex-1')
                         ui.label(task[1]).classes('flex-1')
