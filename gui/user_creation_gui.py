@@ -67,7 +67,8 @@ def user_creation_page():
     selected_avatar = {'id': None}
 
     # Audioelement mit Standardwert
-    audio_element = ui.audio(src=f'/audios/M-Audio.mp3').props('autoplay loop')
+    audio_element = ui.audio(src=f'/audios/M-Audio.mp3').props('autoplay loop').style('display: none;')
+
 
     def select_avatar(avatar_id):
         """Speichert die ID des ausgewählten Avatars."""
@@ -133,7 +134,7 @@ def user_creation_page():
         # Avatare basierend auf der Rasse laden (nur wenn eine Rasse ausgewählt wurde)
         avatars = get_avatars_by_race(selected_race) if selected_race else []
         avatar_container.clear()
-        avatar_container = ui.row().classes('justify-center flex-wrap gap-4 mt-4')
+        avatar_container = ui.row().classes('justify-center flex-wrap gap-4 mt-2')
         if avatars:
             with avatar_container:
                 for avatar in avatars:
@@ -152,8 +153,11 @@ def user_creation_page():
         classes = RACE_TO_CLASSES.get(selected_race, [])
         class_container.clear()
         with class_container:
-            klasse.value = classes[0] if classes else None
-            klasse.options = classes
+            klasse.options = classes  # Aktualisiere die Optionen der Klasse
+            if classes:
+                klasse.value = classes[0]  # Standardwert setzen
+            else:
+                klasse.value = None
 
     def create_user_action(username, rasse, klasse, selected_avatar, progress):
         """Erstellt einen neuen Benutzer mit den eingegebenen Daten."""
@@ -168,6 +172,4 @@ def user_creation_page():
         progress.set_value(1)
         ui.timer(1, lambda: ui.run_javascript('window.location.href="/homepage"'))
 
-    # Audio-Player im Footer platzieren
-    with ui.footer().style('position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.9); z-index: 10; padding: 10px;'):
-        audio_element.classes('mx-auto')
+
