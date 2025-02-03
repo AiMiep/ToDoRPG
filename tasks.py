@@ -60,7 +60,6 @@ def update_task_data(user_id, task_id, description_input, deadline_input, diffic
 
     commit_and_close(database)
 
-    ui.run_javascript('location.href = "/show_tasks"')
 
 
 def update_task_status(user_id, task_id):
@@ -95,7 +94,6 @@ def update_task_status(user_id, task_id):
         cursor.execute('UPDATE tasks SET status = ? WHERE task_id = ? AND user_id = ?', (new_status, task_id, user_id))
         commit_and_close(database)
 
-    ui.run_javascript("location.reload()")
 
 
 def get_task_status_counts(user_id):
@@ -167,7 +165,5 @@ def delete_task(user_id, task_id):
     if task:
         cursor.execute('DELETE FROM tasks WHERE task_id = ? AND user_id = ?', (task_id, user_id))
         commit_and_close(database)
-        ui.notify("Aufgabe erfolgreich gelöscht.")
-        ui.run_javascript("location.reload()")
     else:
         ui.notify("Aufgabe nicht gefunden.")

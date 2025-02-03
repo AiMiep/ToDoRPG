@@ -104,7 +104,11 @@ def nicegui_create_new_task():
             on_click=on_create_task
         ).style('background-color: #4CAF50; color: white; padding: 10px; border-radius: 8px;').classes('w-full mt-4')
 
+def update_and_refresh(user_id, task_id):
+    update_task_status(user_id, task_id)
+    show_tasks_gui.refresh()  # Aktualisiert die Ansicht direkt
 
+@ui.refreshable
 @ui.page('/show_tasks')
 def show_tasks_gui():
     ui.add_head_html("""
@@ -190,7 +194,6 @@ def show_tasks_gui():
                                 with ui.row().classes('w-full justify-center gap-10'):
                                     ui.button('Ja',
                                               on_click=partial(delete_task, user_id, task[0]))
-
                                     ui.button('Nein', on_click=dialog_delete.close)
 
                             ui.button(icon='delete', color='#FBCEDB',
