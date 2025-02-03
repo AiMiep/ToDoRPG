@@ -6,8 +6,63 @@ from tasks import create_new_task, get_valid_date, list_all_tasks, list_finished
 
 user_id = 1
 
-
 def navbar_gui():
+    with ui.dialog() as dialog:
+        with ui.card().classes('w-full max-w-xl mx-auto p-4 shadow-lg').style('border-radius: 10px;'):
+
+            ui.label('Aufgabenerstellung').style('font-size: 3vh; text-align: center; font-weight: bold;').classes('w-full')
+
+            description_input = ui.input(
+                label="✏️ Was möchtest du tun?",
+                placeholder="Beschreibe deine Aufgabe...",
+                validation={'Das ist doch keine richtige Aufgabenbeschreibung!': lambda value: len(value) >= 3}
+            ).classes('w-full')
+
+            deadline_input = ui.input(label="📅 Fälligkeitsdatum", placeholder="TT.MM.JJJJ").classes('w-full mt-4')
+            difficulty_input = ui.select(
+                label="🎯 Wähle die Schwierigkeitsstufe deiner Aufgabe aus:",
+                options=["Leicht", "Mittel", "Schwer"]
+            ).classes('w-full mt-4')
+
+            current_date = datetime.today().strftime('%d.%m.%Y')
+            ui.input(
+                label="📆 Aktuelles Datum:",
+                value=current_date
+            ).classes('w-full mt-4').disable()
+
+            error_message = ui.label('').style('color: red; font-size: 14px; margin-top: 16px;')
+
+            def on_create_task():
+                description = description_input.value
+                deadline = deadline_input.value
+                difficulty = difficulty_input.value
+                status = 'Erstellt'
+
+                if not description:
+                    error_message.text = "❌ Aufgabenbeschreibung fehlt!"
+                    return
+
+                date_error = get_valid_date(deadline)
+                if date_error:
+                    error_message.text = date_error
+                    return
+
+                if not difficulty:
+                    error_message.text = "❌ Schwierigkeitsstufe muss noch ausgewählt werden."
+                    return
+
+                error_message.text = ''
+                create_new_task(difficulty, description, status, current_date, deadline, user_id)
+                dialog.open()
+
+            ui.button(
+                "➕ Aufgabe erstellen",
+                on_click=lambda: (on_create_task(), show_tasks_gui.refresh(), dialog.close(), ui.run_javascript("window.location.href = '/show_tasks';"))
+            ).style('background-color: #4CAF50; color: white; padding: 10px; border-radius: 8px;').classes(
+                'w-full mt-4')
+
+            dialog.close()
+
     with ui.row().style(
             'background-color: rgba(0, 0, 0, 0.7); padding: 18px; '
             'display: flex; justify-content: space-between; align-items: center; '
@@ -19,94 +74,12 @@ def navbar_gui():
                       ).style('color: white; padding: 10px 20px; font-size: 2.5vh; font-weight: bold; '
                               'border-radius: 130px;')
 
-        # Rechter Bereich: Neue Aufgabe erstellen-Button
         with ui.row().style('display: flex; margin-right: 20px;'):
             ui.button('Neue Aufgabe erstellen', icon='add', color='rgba(0, 0, 0, 0.7)',
-                      on_click=lambda: ui.run_javascript("location.href = '/create_task'")
-                      ).style('color: white; padding: 10px 20px; font-size: 2.5vh; font-weight: bold; '
-                              'border-radius: 130px;')
+                      on_click=dialog.open).style(
+                'color: white; padding: 10px 20px; font-size: 2.5vh; font-weight: bold; '
+                'border-radius: 130px;')
 
-
-def navbar_add_task_gui():
-    with ui.row().style(
-            'padding: 18px; '
-            'display: flex; justify-content: space-between; align-items: center; '
-            'border-bottom: 4px double white;'
-    ).classes('w-full'):
-        with ui.row().style('display: flex; margin-left: 20px;'):
-            ui.button('Zurück zur Aufgabenübersicht', icon='list_alt', color='black',
-                      on_click=lambda: ui.run_javascript("location.href = '/show_tasks'")
-                      ).style('color: white; padding: 10px 20px; font-size: 16px; font-weight: bold; '
-                              'border-radius: 130px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);')
-
-        with ui.row().style('display: flex; margin-right: 20px;'):
-            ui.button('Weiter zum Menü', icon='home', color='black',
-                      on_click=lambda: ui.run_javascript("location.href = '/homepage'")
-                      ).style('color: white; padding: 10px 20px; font-size: 16px; font-weight: bold;'
-                              'border-radius: 30px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);')
-
-
-@ui.page('/create_task')
-def nicegui_create_new_task():
-    navbar_add_task_gui()
-
-    with ui.card().classes('w-full max-w-xl mx-auto p-4 shadow-lg'):
-        description_input = ui.input(
-            label="✏️ Was möchtest du tun?",
-            placeholder="Beschreibe deine Aufgabe...",
-            validation={'Das ist doch keine richtige Aufgabenbeschreibung!': lambda value: len(value) >= 3}
-        ).classes('w-full')
-
-        deadline_input = ui.input(label="📅 Fälligkeitsdatum", placeholder="TT.MM.JJJJ").classes('w-full mt-4')
-        difficulty_input = ui.select(
-            label="🎯 Wähle die Schwierigkeitsstufe deiner Aufgabe aus:",
-            options=["Leicht", "Mittel", "Schwer"]
-        ).classes('w-full mt-4')
-
-        current_date = datetime.today().strftime('%d.%m.%Y')
-        ui.input(
-            label="📆 Aktuelles Datum:",
-            value=current_date
-        ).classes('w-full mt-4').disable()
-
-        error_message = ui.label('').style('color: red; font-size: 14px; margin-top: 16px;')
-        with ui.dialog() as dialog:
-            with ui.card().style('animation: fadeIn 0.3s ease;').classes('p-6 shadow-md rounded-xl text-center'):
-                ui.label('✅ Aufgabe wurde erfolgreich erstellt!').classes('text-lg font-bold mb-4')
-                ui.button('Lets goo!', on_click=dialog.close).classes(
-                    'bg-green-500 text-white px-4 py-2 rounded-lg mx-auto').style('display: block;')
-
-        def on_create_task():
-            description = description_input.value
-            deadline = deadline_input.value
-            difficulty = difficulty_input.value
-            status = 'Erstellt'
-
-            if not description:
-                error_message.text = "❌ Aufgabenbeschreibung fehlt!"
-                return
-
-            date_error = get_valid_date(deadline)
-            if date_error:
-                error_message.text = date_error
-                return
-
-            if not difficulty:
-                error_message.text = "❌ Schwierigkeitsstufe muss noch ausgewählt werden."
-                return
-
-            error_message.text = ''
-            create_new_task(difficulty, description, status, current_date, deadline, user_id)
-            dialog.open()
-
-        ui.button(
-            "➕ Aufgabe erstellen",
-            on_click=on_create_task
-        ).style('background-color: #4CAF50; color: white; padding: 10px; border-radius: 8px;').classes('w-full mt-4')
-
-def update_and_refresh(user_id, task_id):
-    update_task_status(user_id, task_id)
-    show_tasks_gui.refresh()  # Aktualisiert die Ansicht direkt
 
 @ui.refreshable
 @ui.page('/show_tasks')
@@ -128,7 +101,7 @@ def show_tasks_gui():
     navbar_gui()
 
     with ui.tabs().classes('w-full').style(
-            'color: white; background-color: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 15px;') as tabs:
+            'color: white; background-color: rgba(0, 0, 0, 0.7); padding: 10px;') as tabs:
         open_tasks = ui.tab('Offene Aufgaben').classes('flex-1')
         all_tasks = ui.tab('Alle Aufgaben').classes('flex-1')
         finished_tasks = ui.tab('Abgeschlossene Aufgaben').classes('flex-1')
