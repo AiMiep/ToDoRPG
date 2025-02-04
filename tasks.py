@@ -100,7 +100,7 @@ def update_task_status(user_id, task_id):
         elif current_status == 'In Bearbeitung':
             new_status = 'Beendet'
 
-            if difficulty.lower() == 'leicht':
+            if difficulty.lower() == 'einfach':
                 xp_gain = 1
             elif difficulty.lower() == 'normal':
                 xp_gain = 2

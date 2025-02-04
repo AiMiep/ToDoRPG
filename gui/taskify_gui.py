@@ -14,7 +14,7 @@ def show_startpage():
     ui.add_head_html("""
     <style>
         body {
-            background-image: url('images/mario.gif');
+            background-image: url('images/backgroundGif/start_background.gif');
             background-size: cover;
             background-position: center;
             margin: 0;
@@ -68,7 +68,7 @@ def show_main_menu():
     ui.add_head_html("""
     <style>
         body {
-            background-image: url('images/menu_background.gif');
+            background-image: url('images/backgroundGif/menu_background.gif');
             background-size: cover;
             background-position: center;
             margin: 0;

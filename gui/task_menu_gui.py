@@ -16,14 +16,16 @@ def navigation_bar_gui():
             'padding: 18px; display: flex; justify-content: space-between; align-items: center; '
             'border-bottom: 4px double white;').classes('w-full'):
         with ui.row().style('display: flex; margin-left: 20px;'):
-            ui.button('Zurück zum Menü', icon='home', color='rgba(0, 0, 0, 0.7)',
+            ui.button('Zurück zum Menü', icon='home', color='white',
                       on_click=lambda: ui.run_javascript("location.href = '/homepage'")).style(
-                'color: white; padding: 10px 20px; font-size: 2vh; font-weight: bold; border-radius: 130px;')
+                'color: black; padding: 10px 20px; font-size: 2vh; font-weight: bold; border-radius: 2vh; '
+                'box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);')
 
         with ui.row().style('display: flex; margin-right: 20px;'):
-            ui.button('Neue Aufgabe erstellen', icon='add', color='rgba(0, 0, 0, 0.7)',
+            ui.button('Neue Aufgabe erstellen', icon='add', color='white',
                       on_click=dialog.open).style(
-                'color: white; padding: 10px 20px; font-size: 2vh; font-weight: bold; border-radius: 130px;')
+                'color: black; padding: 10px 20px; font-size: 2vh; font-weight: bold; border-radius: 2vh; '
+                'box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);')
 
 
 def create_new_task_dialog():
@@ -46,7 +48,7 @@ def create_new_task_dialog():
             ui.label('🎯 Schwierigkeitsstufe').style('text-align:center;').classes('w-full mt-4')
 
             difficulty_input = ui.radio(
-                options=["leicht", "normal", "schwer"],
+                options=["einfach", "normal", "schwer"],
                 value="normal"
             ).props('inline').style('display: flex; justify-content: center; gap: 5%;').classes('w-full')
 
@@ -163,7 +165,7 @@ def edit_task_attributes_and_refresh_list(user_id, task_id):
 
             ui.label('Neue Schwierigkeitsstufe').style('text-align:center;').classes('w-full mt-4')
             difficulty_input = ui.radio(
-                options=["leicht", "normal", "schwer"],
+                options=["einfach", "normal", "schwer"],
                 value=task[1]
             ).props('inline').style('display: flex; justify-content: center; gap: 5%;').classes('w-full')
 
@@ -199,8 +201,8 @@ def create_nicegui_elements_for_task_lists(task_type):
 
     if tasks:
         with ui.row().classes('w-full text-center p-2').style(
-                'padding: 1.5vh; background-color: rgba(0, 0, 0, 0.8); border: 3px solid black; color: white; '
-                'font-weight: bold; font-size: 1.2vw; border-radius: 15px'):
+                'padding: 1.5vh; background-color: rgba(0, 0, 0, 0.7); border: 3px solid black; color: white; '
+                'font-weight: bold; font-size: 1.2vw;'):
             ui.label("Schwierigkeit").classes('flex-1')
             ui.label("Beschreibung").classes('flex-1')
             ui.label("Erstellungsdatum").classes('flex-1')
@@ -212,8 +214,9 @@ def create_nicegui_elements_for_task_lists(task_type):
 
         for task in tasks:
             with ui.row().classes('w-full text-center p-2').style(
-                    'font-size: 1vw; border: 3px solid white; border-radius: 15px; background-color: white;'
-                    'display: flex; align-items: center; justify-content: center;'):
+                    'font-size: 1vw; border-radius: 15px; background-color: rgba(255, 255, 255, 0.85); '
+                    'display: flex; align-items: center; justify-content: center; '
+                    'box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.25);'):
                 ui.label(task[1]).classes('flex-1')  # Schwierigkeit
                 ui.label(task[2]).classes('flex-1')  # Beschreibung
                 ui.label(task[4]).classes('flex-1')  # Erstellungsdatum
@@ -252,7 +255,7 @@ def display_tasks_gui():
     ui.add_head_html("""
     <style>
         body {
-            background-image: url('images/tasks_background.jpeg');
+            background-image: url('images/backgroundGif/tasks_background.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
