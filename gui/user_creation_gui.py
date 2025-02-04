@@ -69,7 +69,6 @@ def user_creation_page():
     # Audioelement mit Standardwert
     audio_element = ui.audio(src=f'/audios/M-Audio.mp3').props('autoplay loop').style('display: none;')
 
-
     def select_avatar(avatar_id):
         """Speichert die ID des ausgewählten Avatars."""
         selected_avatar['id'] = avatar_id
@@ -107,8 +106,8 @@ def user_creation_page():
                 class_container = ui.column().classes('w-full items-center gap-3')  # Container für Klassen
                 klasse = ui.radio([])  # Leere Optionen initialisieren
 
-            # Container für Avatare (zu Beginn leer)
-            avatar_container = ui.row().classes('justify-center flex-wrap gap-6 mt-4')
+            # **Avatar-Wrapper UNTER der Klassenauswahl**
+            avatar_wrapper = ui.column().classes('w-full items-center mt-4')  # Container für die Avatare
 
             # Fortschrittsanzeige und Button zum Erstellen
             with ui.column().classes('items-center w-full gap-4 mt-6'):
@@ -119,7 +118,7 @@ def user_creation_page():
 
     def update_page_elements(selected_race):
         """Aktualisiert Hintergrund-GIF, Avatare, Klassen und Soundtrack basierend auf der gewählten Rasse."""
-        nonlocal avatar_container, class_container
+        nonlocal avatar_wrapper, class_container
 
         # Hintergrund aktualisieren
         background_path = RACE_TO_BACKGROUND_GIF.get(selected_race, "backgroundGif/M-Background.gif")
@@ -131,11 +130,15 @@ def user_creation_page():
         if soundtrack:
             audio_element.set_source(f'/audios/{soundtrack}')
 
-        # Avatare basierend auf der Rasse laden (nur wenn eine Rasse ausgewählt wurde)
-        avatars = get_avatars_by_race(selected_race) if selected_race else []
-        avatar_container.clear()
-        avatar_container = ui.row().classes('justify-center flex-wrap gap-4 mt-2')
-        if avatars:
+        # **Avatar-Wrapper leeren und neuen Avatar-Container hinzufügen**
+        avatar_wrapper.clear()
+
+    # **Avatar-Container NEU setzen (mit `ui.row()`)**
+        with avatar_wrapper:
+            avatar_container = ui.row().classes('justify-center flex-wrap gap-4 mt-2')
+
+            # Avatare basierend auf der Rasse hinzufügen
+            avatars = get_avatars_by_race(selected_race) if selected_race else []
             with avatar_container:
                 for avatar in avatars:
                     with ui.column().classes('items-center justify-center gap-2') \
@@ -149,9 +152,11 @@ def user_creation_page():
                             on_click=lambda a_id=avatar['id']: select_avatar(a_id)
                         ).classes('bg-blue-500 text-white text-xs font-semibold rounded-md py-2 px-4 hover:bg-blue-600')
 
+        # **Klassen-Container leeren**
+        class_container.clear()
+
         # Klassen basierend auf der Rasse laden
         classes = RACE_TO_CLASSES.get(selected_race, [])
-        class_container.clear()
         with class_container:
             klasse.options = classes  # Aktualisiere die Optionen der Klasse
             if classes:
