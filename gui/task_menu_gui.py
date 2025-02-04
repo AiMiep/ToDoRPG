@@ -239,9 +239,11 @@ def create_nicegui_elements_for_task_lists(task_type):
                                   on_click=lambda task_id=task[0]: delete_task_and_refresh_list(user_id,
                                                                                                 task_id)).classes(
                             'rounded').style('color: #EA4335;')
-
     else:
-        ui.label(f"Keine {task_type} Aufgaben.").classes('w-full text-center').style('color: #777; font-style: italic;')
+        with ui.row().classes('w-full h-full justify-center items-center').style(
+                'margin-top: 16vh'):
+            ui.label(f"Keine Aufgaben gefunden...").classes('text-center').style(
+                'color: black; font-weight: bold; font-size: 3vh;')
 
 
 @ui.page('/show_tasks')
