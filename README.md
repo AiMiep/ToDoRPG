@@ -83,6 +83,7 @@ ToDoRPG ist eine motivierende Applikation, mit der Nutzer ihre To-Do-Listen auf 
 Folgende Bugs sind uns bewusst, aber leider noch nicht behoben. Bei den Bugs handelt es sich allerdings um erweiterte Features. 
 
 - Bilder Bug bei der Rasse Mario Bros, andere Rassen funktionieren problemlos.
+- Dialog zum Level-Up wird nicht angezeigt --> Problem: die Liste der Aufgaben aktualisiert direkt nachdem der Status der Aufgabe hochgesetzt wird, daher wird der Dialog sofort wieder geschlossen und daher nicht angezeigt.
 - Benutzerwechsel:
   - Xp wird weiterhin auf den vorherigen Benutzer übertragen.
   - Tasks werden von vorherigem Benutzer angezeigt.
