@@ -36,14 +36,14 @@ def create_new_task_dialog():
     dialog = ui.dialog()
     with dialog:
         with ui.card().classes('w-full max-w-xl mx-auto p-4 shadow-lg').style('border-radius: 10px;'):
-            ui.label('Aufgabenerstellung').style('font-size: 3vh; text-align: center; font-weight: bold;').classes(
+            ui.label('📖 Neue Aufgabe erstellen').style('font-size: 3vh; text-align: center; font-weight: bold;').classes(
                 'w-full')
 
             description_input = ui.input(
                 label="✏️ Was möchtest du tun?"
             ).classes('w-full')
 
-            deadline_input = ui.input(label="📅 Fälligkeitsdatum", placeholder="TT.MM.JJJJ").classes('w-full')
+            deadline_input = ui.input(label="⌛ Fälligkeitsdatum", placeholder="TT.MM.JJJJ").classes('w-full')
 
             ui.label('🎯 Schwierigkeitsstufe').style('text-align:center;').classes('w-full mt-4')
 
@@ -95,8 +95,8 @@ def create_new_task_dialog():
                 deadline_input.set_value('')
 
             with ui.row().classes('w-full justify-between items-center gap-4'):
-                ui.button("Aufgabe erstellen", on_click=create_task_handler).classes('flex-1')
-                ui.button("Abbrechen", on_click=dialog.close).classes('flex-1')
+                ui.button("✅ Erstellen", on_click=create_task_handler, color='rgba(0, 0, 0, 0.7)').classes('flex-1').style('color: white')
+                ui.button("❌ Abbrechen", on_click=dialog.close, color='rgba(0, 0, 0, 0.7)').classes('flex-1').style('color: white')
 
     return dialog
 
@@ -158,12 +158,12 @@ def edit_task_attributes_and_refresh_list(user_id, task_id):
             ui.label('📝 Aufgabe bearbeiten').style(
                 'font-size: 3vh; text-align: center; font-weight: bold;').classes('w-full')
 
-            description_input = ui.input(label="Neue Beschreibung", value=task[2]).classes('w-full')
+            description_input = ui.input(label="✏️ Neue Beschreibung", value=task[2]).classes('w-full')
 
-            deadline_input = ui.input(label="Neues Fälligkeitsdatum", placeholder="TT.MM.JJJJ", value=task[5]).classes(
+            deadline_input = ui.input(label="⌛ Neues Fälligkeitsdatum", placeholder="TT.MM.JJJJ", value=task[5]).classes(
                 'w-full')
 
-            ui.label('Neue Schwierigkeitsstufe').style('text-align:center;').classes('w-full mt-4')
+            ui.label('🎯 Neue Schwierigkeitsstufe').style('text-align:center;').classes('w-full mt-4')
             difficulty_input = ui.radio(
                 options=["einfach", "normal", "schwer"],
                 value=task[1]
@@ -180,9 +180,9 @@ def edit_task_attributes_and_refresh_list(user_id, task_id):
                     reload_open_tasks_list.refresh()
                     reload_all_tasks_list.refresh()
 
-            with ui.row().classes('w-full justify-center gap-10'):
-                ui.button('✅ Speichern', on_click=save_edit).classes('w-1/3')
-                ui.button('❌ Abbrechen', on_click=dialog_edit.close).classes('w-1/3')
+            with ui.row().classes('w-full justify-between items-center gap-4'):
+                ui.button('✅ Speichern', on_click=save_edit, color='rgba(0, 0, 0, 0.7)').classes('flex-1').style('color: white')
+                ui.button('❌ Abbrechen', on_click=dialog_edit.close, color='rgba(0, 0, 0, 0.7)').classes('flex-1').style('color: white')
 
     dialog_edit.open()
 
