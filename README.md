@@ -48,21 +48,23 @@ ToDoRPG ist eine motivierende Applikation, mit der Nutzer ihre To-Do-Listen auf 
 
 ## Projektaufteilung
 
-| **Anna** <br> Gesamte Userfunktionen <br> Backend + Frontend:        | **Ai Mi** <br> Gesamte Aufgabenfunktionen <br> Backend + Frontend: |
-|----------------------------------------------------------------------|----------------------------------------------------------------------|
-| - Erstellung                                                         | - Erstellung                                                       |
-| - Übersicht Userdaten                                                | - Bearbeitung                                                      |
-| - Userwechsel                                                        | - Löschung                                                         |
-| - Benutzerübersicht                                                  | - Updaten                                                          |
-| - Belohnungssystem                                                   | - Levelingsystem                                                   |
-| **Zusatz**: ReadMe                                                   | **Zusatz**: Startseite und Hauptmenü                               |
+| **Anna** <br> Gesamte Userfunktionen <br> Backend + Frontend: | **Ai Mi** <br> Gesamte Aufgabenfunktionen <br> Backend + Frontend: |
+|---------------------------------------------------------------|--------------------------------------------------------------------|
+| - Datenbank                                                   | - Datenbank                                                        |
+| - Erstellung                                                  | - Erstellung                                                       |
+| - Übersicht Userdaten                                         | - Bearbeitung                                                      |
+| - Übersicht Userdaten                                         | - Bearbeitung                                                      |
+| - Userwechsel                                                 | - Löschung                                                         |
+| - Benutzerübersicht                                           | - Updaten                                                          |
+| - Belohnungssystem                                            | - Levelingsystem                                                   |
+| **Zusatz**: ReadMe                                            | **Zusatz**: Startseite und Hauptmenü                               |
 
 ---
 
 ## Entwicklung
 
 ### Technologien
-- **Python 3.10+**: Hauptprogrammiersprache.
+- **Python 3.11**: Hauptprogrammiersprache.
 - **NiceGUI**: Für die Erstellung der Benutzeroberfläche.
 - **SQLite**: Für die persistente Datenspeicherung.
 
@@ -76,11 +78,24 @@ ToDoRPG ist eine motivierende Applikation, mit der Nutzer ihre To-Do-Listen auf 
 
 ---
 
+### Bugs
+
+Folgende Bugs sind uns bewusst, aber leider noch nicht behoben. Bei den Bugs handelt es sich allerdings um erweiterte Features. 
+
+- Bilder Bug bei der Rasse Mario Bros, andere Rassen funktionieren problemlos.
+- Benutzerwechsel:
+  - Xp wird weiterhin auf den vorherigen Benutzer übertragen.
+  - Tasks werden von vorherigem Benutzer angezeigt.
+
+
+
+---
+
 ## Installation
 
 ### Voraussetzungen
 
-- **Python 3.10+**
+- **Python 3.11**
 - Abhängigkeiten:
   - `nicegui`
   - `sqlite3`
