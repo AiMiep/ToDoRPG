@@ -4,7 +4,7 @@ from database import get_database_cursor, commit_and_close
 from user import update_user_xp_and_level
 
 
-def get_valid_date(deadline):
+def check_date_validation(deadline):
     try:
         date_obj = datetime.strptime(deadline, "%d.%m.%Y").date()
 
@@ -12,7 +12,7 @@ def get_valid_date(deadline):
             return "❌ Datum ist in der Vergangenheit!"
         return None
     except ValueError:
-        return "❌ Da stimmt doch was mit dem Datum nicht..."
+        return "❌ Bitte überprüfe die Eingaben..."
 
 
 def create_new_task(difficulty, description, status, current_date, deadline, user_id):
@@ -25,7 +25,8 @@ def create_new_task(difficulty, description, status, current_date, deadline, use
 
     commit_and_close(database)
 
-def update_task_data(user_id, task_id, description_input, deadline_input, difficulty_input, error_message):
+
+def edit_task_attributes(user_id, task_id, description_input, deadline_input, difficulty_input, error_message):
     new_description = description_input.value
     new_deadline = deadline_input.value
     new_difficulty = difficulty_input.value
@@ -48,7 +49,7 @@ def update_task_data(user_id, task_id, description_input, deadline_input, diffic
             )
 
         if new_deadline:
-            date_error = get_valid_date(new_deadline)
+            date_error = check_date_validation(new_deadline)
             if date_error:
                 error_message.text = date_error
                 database.close()
@@ -63,7 +64,6 @@ def update_task_data(user_id, task_id, description_input, deadline_input, diffic
     commit_and_close(database)
 
     error_message.text = ""
-    ui.run_javascript("window.location.href = '/show_tasks';")
 
 
 def update_task_status(user_id, task_id):
@@ -99,19 +99,6 @@ def update_task_status(user_id, task_id):
         commit_and_close(database)
 
 
-
-def get_task_status_counts(user_id):
-    tasks = list_all_tasks(user_id)
-    task_status_counts = {'Erstellt': 0, 'In Bearbeitung': 0, 'Beendet': 0}
-
-    for task in tasks:
-        status = task[3]
-        if status in task_status_counts:
-            task_status_counts[status] += 1
-
-    return task_status_counts
-
-
 def list_all_tasks(user_id):
     database, cursor = get_database_cursor()
     cursor.execute('''SELECT * FROM tasks WHERE user_id = ?''', (user_id,))
@@ -125,7 +112,7 @@ def list_all_tasks(user_id):
         return []
 
 
-def list_all_open_tasks(user_id):
+def list_open_tasks(user_id):
     database, cursor = get_database_cursor()
     cursor.execute('''SELECT * FROM tasks WHERE user_id = ? AND status != ?''', (user_id, 'Beendet'))
     tasks = cursor.fetchall()
@@ -150,14 +137,9 @@ def list_finished_tasks(user_id):
 
 
 def delete_all_tasks(user_id):
-    confirmation = input("Sicher? (ja/nein): ").lower()
-    if confirmation == 'ja':
-        database, cursor = get_database_cursor()
-        cursor.execute('''DELETE FROM tasks WHERE user_id = ?''', (user_id,))
-        commit_and_close(database)
-        print("Alle Aufgaben gelöscht.")
-    else:
-        print("Löschen abgebrochen.")
+    database, cursor = get_database_cursor()
+    cursor.execute('''DELETE FROM tasks WHERE user_id = ?''', (user_id,))
+    commit_and_close(database)
 
 
 def delete_task(user_id, task_id):
@@ -169,6 +151,5 @@ def delete_task(user_id, task_id):
     if task:
         cursor.execute('DELETE FROM tasks WHERE task_id = ? AND user_id = ?', (task_id, user_id))
         commit_and_close(database)
-        ui.run_javascript('window.location.href="/show_tasks"')
     else:
         ui.notify("Aufgabe nicht gefunden.")

@@ -157,9 +157,6 @@ def show_user_status_dialog():
                 ui.button('Schließen', on_click=dialog.close).classes('mt-4 bg-blue-500 text-white rounded-lg')
             dialog.open()
 
-# Weitere Funktionen: `show_all_users_dialog`, `show_user_items_dialog`, `show_switch_user_dialog`...
-
-
 def show_all_users_dialog():
     """Zeigt alle Benutzer in einem optimierten Dialogfenster."""
     users = get_all_users()
