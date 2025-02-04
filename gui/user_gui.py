@@ -34,18 +34,11 @@ def get_avatars_by_race(race):
 
 def get_avatar_path_by_id(avatar_id):
     """Gibt den Pfad eines Avatars basierend auf der ID zurück."""
-    avatars = {
-        10: "newAvatars/M-Mario.jpg",
-        11: "newAvatars/M-Wario.jpg",
-        12: "newAvatars/M-Peach.jpg",
-        7: "newAvatars/Z-Held.jpg",
-        8: "newAvatars/Z-Bogen.jpg",
-        9: "newAvatars/Z-Gelehrter.jpg",
-        4: "newAvatars/P-Trainer.jpg",
-        5: "newAvatars/P-Ranger.jpg",
-        6: "newAvatars/P-Brawler.jpg",
-    }
-    return f'/images/{avatars.get(avatar_id, "default.jpg")}'  # Standardbild, falls ID nicht existiert
+    for race, avatars in RACE_TO_AVATARS.items():
+        for avatar in avatars:
+            if avatar["id"] == avatar_id:
+                return f'/images/{avatar["path"]}'
+    return None
 
 
 @ui.page('/user_functions')

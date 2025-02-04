@@ -92,6 +92,15 @@ def create_table():
     ''')
 
 
+    # Avatare einfügen
+    cursor.execute('SELECT COUNT(*) FROM avatars')
+    if cursor.fetchone()[0] == 0:  # Wenn keine Avatare existieren
+        avatars = [
+
+        ]
+        cursor.executemany('INSERT INTO avatars (name, path) VALUES (?, ?)', avatars)
+        print("Avatare wurden erfolgreich zur Datenbank hinzugefügt.")
+
     # Füge neue Items hinzu, ohne alte zu löschen
     items = [
         # Mario-Items (M)
