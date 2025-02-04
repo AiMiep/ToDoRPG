@@ -46,10 +46,35 @@ ToDoRPG ist eine motivierende Applikation, mit der Nutzer ihre To-Do-Listen auf 
 
 ---
 
+## Projektaufteilung
+
+| Anna                             | Ai Mi                                |
+|----------------------------------|--------------------------------------|
+| **Gesamte Userfunktionen**       | **Gesamte Aufgabenfunktionen**       |
+| Backend + Frontend:              | Backend + Frontend:                  |
+| - Erstellung                     | - Erstellung                         |
+| - Übersicht Userdaten            | - Bearbeitung                        |
+| - Userwechsel                    | - Löschung                           |
+| - Benutzerübersicht              | - Updaten                            |
+| - Belohnungssystem               | - Levelingsystem                     |
+| **Zusatz**: ReadMe               | **Zusatz**: Startseite und Hauptmenü |
+
+---
+
 ## Entwicklung
 
-- Dieses Projekt wurde in Zweiergruppen entwickelt.
-- Zusammenarbeit über ein zentrales Git-Repository.
+### Technologien
+- **Python 3.10+**: Hauptprogrammiersprache.
+- **NiceGUI**: Für die Erstellung der Benutzeroberfläche.
+- **SQLite**: Für die persistente Datenspeicherung.
+
+### Besonderheiten
+- **Gruppenprojekt**:
+  - Das Projekt wurde von einer Zweiergruppe entwickelt.
+  - Zusammenarbeit über ein zentrales Git-Repository.
+- **Modularer Aufbau**:
+  - Klare Trennung zwischen Logik, Datenbankoperationen und Benutzeroberfläche.
+  - Erweiterbarkeit durch gut strukturierte Dateien und Module.
 
 ---
 
