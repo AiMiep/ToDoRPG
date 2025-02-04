@@ -36,7 +36,7 @@ def get_avatar_path_by_id(avatar_id):
     """Gibt den Pfad eines Avatars basierend auf der ID zurück."""
     avatars = {
         10: "newAvatars/M-Mario.jpg",
-        11: "newAvatars/M-Wario.jpg",  # Wario-Pfad ergänzt
+        11: "newAvatars/M-Wario.jpg",
         12: "newAvatars/M-Peach.jpg",
         7: "newAvatars/Z-Held.jpg",
         8: "newAvatars/Z-Bogen.jpg",
@@ -61,36 +61,42 @@ def functions_page():
     username, rasse, klasse, avatar_id, level, xp = user
     avatars = get_avatars_by_race(rasse)
 
-    with ui.column().classes('min-h-screen w-screen justify-start items-center') \
-            .style('background-image: url("/images/backgroundGif/DefaultBackgroundGif.gif"); background-size: cover; background-position: center;'):
+    with ui.column().classes('min-h-screen w-screen justify-start items-center').style(
+        'background-image: url("/images/backgroundGif/DefaultBackgroundGif.gif"); background-size: cover; background-position: center;'):
+
         with ui.card().classes('rounded-xl shadow-2xl p-8 w-11/12 sm:w-3/4 md:w-2/3 mt-10').style(
-                'background-color: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);'
-        ):
+            'background-color: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);'):
+
             ui.label('🏰 Willkommen! Schau dich um! 🏰').classes(
                 'text-4xl sm:text-5xl font-extrabold text-yellow-300 text-center mb-6'
-            )
+            ).style('font-family: "Courier New", Courier, monospace;')
+
             ui.label(f'Willkommen, {username}! Wähle eine Funktion aus.').classes(
                 'text-lg text-gray-700 text-center mb-8'
-            )
+            ).style('font-family: "Courier New", Courier, monospace;')
 
             # Benutzeraktionen
             with ui.column().classes('gap-4'):
                 ui.button('🛡️ Benutzerstatus prüfen', on_click=show_user_status_dialog).classes(
                     'bg-gradient-to-r from-green-400 to-teal-500 text-white font-bold text-lg w-full rounded-lg py-3 hover:shadow-xl'
-                )
+                ).style('font-family: "Courier New", Courier, monospace;')
+
                 ui.button('📜 Alle Benutzer anzeigen', on_click=show_all_users_dialog).classes(
                     'bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold text-lg w-full rounded-lg py-3 hover:shadow-xl'
-                )
+                ).style('font-family: "Courier New", Courier, monospace;')
+
                 ui.button('🎒 Benutzer-Items anzeigen', on_click=show_user_items_dialog).classes(
                     'bg-gradient-to-r from-orange-400 to-red-500 text-white font-bold text-lg w-full rounded-lg py-3 hover:shadow-xl'
-                )
+                ).style('font-family: "Courier New", Courier, monospace;')
+
                 ui.button('✨ Neuen Benutzer erstellen',
                           on_click=lambda: ui.run_javascript('window.location.href="/create_user"')).classes(
                     'bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold text-lg w-full rounded-lg py-3 hover:shadow-xl'
-                )
+                ).style('font-family: "Courier New", Courier, monospace;')
+
                 ui.button('🔄 Benutzer wechseln', on_click=show_switch_user_dialog).classes(
                     'bg-gradient-to-r from-gray-400 to-gray-600 text-white font-bold text-lg w-full rounded-lg py-3 hover:shadow-xl'
-                )
+                ).style('font-family: "Courier New", Courier, monospace;')
 
             # Verfügbare Avatare basierend auf der Rasse anzeigen
             with ui.row().classes('justify-center flex-wrap gap-6 mt-8'):
@@ -99,15 +105,19 @@ def functions_page():
                         ui.image(f'/images/{avatar["path"]}').classes(
                             'w-24 h-24 object-cover rounded-full border border-gray-300 shadow-lg hover:scale-110 transition-transform'
                         )
-                        ui.label(avatar["name"]).classes('text-sm font-bold text-gray-700')
+                        ui.label(avatar["name"]).classes('text-sm font-bold text-gray-700').style(
+                            'font-family: "Courier New", Courier, monospace;')
+
                         ui.button('Auswählen', on_click=lambda a_id=avatar["id"]: change_user_avatar(a_id)).classes(
                             'bg-blue-500 text-white text-xs rounded-md px-4 py-2 hover:bg-blue-600'
-                        )
+                        ).style('font-family: "Courier New", Courier, monospace;')
 
             # Button für das Hauptmenü
             ui.button('🏠 Zurück zum Hauptmenü',
                       on_click=lambda: ui.run_javascript("window.location.href='/homepage';")).classes(
-                'bg-gray-600 text-white font-bold text-lg w-full rounded-lg py-3 mt-6 hover:shadow-xl')
+                'bg-gray-600 text-white font-bold text-lg w-full rounded-lg py-3 mt-6 hover:shadow-xl'
+            ).style('font-family: "Courier New", Courier, monospace;')
+
 
 def change_user_avatar(avatar_id):
     """Ändert den Avatar des aktuellen Benutzers und lädt die Seite neu, um Änderungen anzuzeigen."""
