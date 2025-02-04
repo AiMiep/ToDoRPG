@@ -24,7 +24,7 @@ RACE_TO_SOUNDTRACK = {
 RACE_TO_CLASSES = {
     "Mensch (Mario Bros)": [
         "🦸 Held (Mario)",
-        "🦹 Schurke (Waluigi)",
+        "🦹 Schurke (Wario)",
         "👸 Prinzessin (Peach)"
     ],
     "Goronen/Zoras/Rito/Gerudo (Zelda)": [
@@ -45,7 +45,7 @@ def get_avatars_by_race(race):
     avatars = {
         "Mensch (Mario Bros)": [
             {"id": 10, "name": "Mario", "path": "newAvatars/M-Mario.jpg"},
-            {"id": 11, "name": "Waluigi", "path": "newAvatars/M-Waluigi.jpg"},
+            {"id": 11, "name": "Wario", "path": "newAvatars/M-Wario.jpg"},  # Angepasst
             {"id": 12, "name": "Peach", "path": "newAvatars/M-Peach.jpg"}
         ],
         "Goronen/Zoras/Rito/Gerudo (Zelda)": [
