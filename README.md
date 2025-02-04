@@ -48,16 +48,14 @@ ToDoRPG ist eine motivierende Applikation, mit der Nutzer ihre To-Do-Listen auf 
 
 ## Projektaufteilung
 
-| Anna                             | Ai Mi                                |
-|----------------------------------|--------------------------------------|
-| **Gesamte Userfunktionen**       | **Gesamte Aufgabenfunktionen**       |
-| Backend + Frontend:              | Backend + Frontend:                  |
-| - Erstellung                     | - Erstellung                         |
-| - Übersicht Userdaten            | - Bearbeitung                        |
-| - Userwechsel                    | - Löschung                           |
-| - Benutzerübersicht              | - Updaten                            |
-| - Belohnungssystem               | - Levelingsystem                     |
-| **Zusatz**: ReadMe               | **Zusatz**: Startseite und Hauptmenü |
+| **Anna** <br> Gesamte Userfunktionen <br> Backend + Frontend:        | **Ai Mi** <br> Gesamte Aufgabenfunktionen <br> Backend + Frontend: |
+|----------------------------------------------------------------------|----------------------------------------------------------------------|
+| - Erstellung                                                         | - Erstellung                                                       |
+| - Übersicht Userdaten                                                | - Bearbeitung                                                      |
+| - Userwechsel                                                        | - Löschung                                                         |
+| - Benutzerübersicht                                                  | - Updaten                                                          |
+| - Belohnungssystem                                                   | - Levelingsystem                                                   |
+| **Zusatz**: ReadMe                                                   | **Zusatz**: Startseite und Hauptmenü                               |
 
 ---
 
@@ -70,7 +68,7 @@ ToDoRPG ist eine motivierende Applikation, mit der Nutzer ihre To-Do-Listen auf 
 
 ### Besonderheiten
 - **Gruppenprojekt**:
-  - Das Projekt wurde von einer Zweiergruppe entwickelt.
+  - Das Projekt wurde in einer Zweiergruppe entwickelt.
   - Zusammenarbeit über ein zentrales Git-Repository.
 - **Modularer Aufbau**:
   - Klare Trennung zwischen Logik, Datenbankoperationen und Benutzeroberfläche.
@@ -86,4 +84,3 @@ ToDoRPG ist eine motivierende Applikation, mit der Nutzer ihre To-Do-Listen auf 
 - Abhängigkeiten:
   - `nicegui`
   - `sqlite3`
-
