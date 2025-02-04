@@ -147,9 +147,9 @@ def update_user_xp_and_level(user_id, xp_gain):
         new_level = current_level
 
         # Prüfen, ob ein Level-Up erreicht wird
-        if new_xp >= 3:
+        if new_xp >= 10:
             new_level += 1
-            new_xp -= 3
+            new_xp = 0
 
             # Item vergeben
             item_name, item_path = assign_item_on_level_up(user_id, rasse, new_level)

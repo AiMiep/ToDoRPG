@@ -25,8 +25,7 @@ def create_new_task(difficulty, description, status, current_date, deadline, use
 
     commit_and_close(database)
 
-
-def update_task_data(user_id, task_id, description_input, deadline_input, difficulty_input):
+def update_task_data(user_id, task_id, description_input, deadline_input, difficulty_input, error_message):
     new_description = description_input.value
     new_deadline = deadline_input.value
     new_difficulty = difficulty_input.value
@@ -49,17 +48,22 @@ def update_task_data(user_id, task_id, description_input, deadline_input, diffic
             )
 
         if new_deadline:
-            try:
-                deadline_date = datetime.strptime(new_deadline, "%d.%m.%Y").date()
-                cursor.execute(
-                    'UPDATE tasks SET deadline = ? WHERE task_id = ? AND user_id = ?',
-                    (deadline_date, task_id, user_id)
-                )
-            except ValueError:
-                print(f"Ungültiges Datumsformat: {new_deadline}")
+            date_error = get_valid_date(new_deadline)
+            if date_error:
+                error_message.text = date_error
+                database.close()
+                return
+
+            deadline_date = datetime.strptime(new_deadline, "%d.%m.%Y").strftime("%d.%m.%Y")
+            cursor.execute(
+                'UPDATE tasks SET deadline = ? WHERE task_id = ? AND user_id = ?',
+                (deadline_date, task_id, user_id)
+            )
 
     commit_and_close(database)
 
+    error_message.text = ""
+    ui.run_javascript("window.location.href = '/show_tasks';")
 
 
 def update_task_status(user_id, task_id):
@@ -81,11 +85,11 @@ def update_task_status(user_id, task_id):
             new_status = 'Beendet'
 
             if difficulty.lower() == 'leicht':
-                xp_gain = 0.5
-            elif difficulty.lower() == 'mittel':
                 xp_gain = 1
+            elif difficulty.lower() == 'normal':
+                xp_gain = 2
             elif difficulty.lower() == 'schwer':
-                xp_gain = 1.5
+                xp_gain = 4
             else:
                 xp_gain = 0
 
@@ -165,5 +169,6 @@ def delete_task(user_id, task_id):
     if task:
         cursor.execute('DELETE FROM tasks WHERE task_id = ? AND user_id = ?', (task_id, user_id))
         commit_and_close(database)
+        ui.run_javascript('window.location.href="/show_tasks"')
     else:
         ui.notify("Aufgabe nicht gefunden.")
