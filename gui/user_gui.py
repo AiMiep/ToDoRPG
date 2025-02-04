@@ -158,51 +158,56 @@ def show_user_status_dialog():
 
 
 def show_all_users_dialog():
-    """Zeigt alle Benutzer in einem Dialogfenster in einer ausgerichteten Tabelle."""
+    """Zeigt alle Benutzer in einem optimierten Dialogfenster."""
     users = get_all_users()
 
     with ui.dialog() as dialog:
-        with ui.card().classes('w-full sm:w-4/5 lg:w-3/4 xl:w-2/3 p-6'):  # Breitere Karte
+        # Dialog mit leicht transparenter Hintergrundfarbe
+        with ui.card().style('width: 100%; max-width: 900px; background-color: rgba(255, 255, 255, 0.95);'):
             ui.label('📜 Alle Benutzer').classes('text-2xl font-bold text-center mb-4')
 
             if users:
                 # Kopfzeile der Tabelle
-                with ui.row().classes('font-bold text-left bg-gray-100 py-2 px-4 rounded-t-lg w-full justify-start'):
-                    ui.label('Avatar').classes('flex-1 text-center')  # Konsistente Breiten
-                    ui.label('Name').classes('flex-1')
-                    ui.label('Rasse').classes('flex-2')  # Breitere Spalte für längere Inhalte
-                    ui.label('Klasse').classes('flex-2')
-                    ui.label('Level').classes('flex-1')
-                    ui.label('XP').classes('flex-1')
+                with ui.row().classes('font-bold text-left bg-gray-100 py-1 px-2 rounded-t-lg w-full'):
+                    ui.label('Avatar').style('width: 10%; text-align: center;')
+                    ui.label('Name').style('width: 20%; text-align: left;')
+                    ui.label('Rasse').style('width: 25%; text-align: left;')
+                    ui.label('Klasse').style('width: 20%; text-align: left;')
+                    ui.label('Level / XP').style('width: 15%; text-align: center;')
 
                 # Benutzerinformationen anzeigen
                 for user in users:
                     user_id_in_db, username, rasse, klasse, avatar_id, level, xp = user
                     avatar_path = get_avatar_path_by_id(avatar_id)
 
-                    # Benutzerzeilen
-                    with ui.row().classes('py-2 px-4 border-b border-gray-200 items-center w-full justify-start'):
-                        if avatar_path:
-                            # Avatar mit fester Größe und `object-fit: cover` für gleichmäßige Darstellung
-                            ui.image(avatar_path).style(
-                                'width: 48px; height: 48px; border-radius: 50%; object-fit: cover;'
-                            ).classes('shadow-sm flex-1')
-                        else:
-                            ui.label('Kein Avatar').classes('flex-1 text-center')
-                        ui.label(username).classes('flex-1')
-                        ui.label(rasse).classes('flex-2')
-                        ui.label(klasse).classes('flex-2')
-                        ui.label(str(level)).classes('flex-1 text-center')
-                        ui.label(str(xp)).classes('flex-1 text-center')
-            else:
-                ui.label('Es sind keine Benutzer in der Datenbank vorhanden.').classes(
-                    'text-lg text-gray-500 text-center'
-                )
+                    # Benutzerzeile
+                    with ui.row().classes('py-1 px-2 border-b border-gray-200 w-full items-center'):
+                        # Avatar
+                        with ui.element('div').style(
+                            'width: 40px; height: 40px; border-radius: 50%; overflow: hidden; '
+                            'display: flex; justify-content: center; align-items: center; background-color: #f0f0f0;'
+                        ):
+                            ui.image(avatar_path).style('width: 100%; height: 100%; object-fit: cover;')
 
-            # Schließen-Button
+                        # Name
+                        ui.label(username).style('width: 20%; text-align: left;')
+
+                        # Rasse
+                        ui.label(rasse).style('width: 25%; text-align: left;')
+
+                        # Klasse
+                        ui.label(klasse).style('width: 20%; text-align: left;')
+
+                        # Level / XP kombiniert
+                        ui.label(f'Level: {level} | XP: {xp}').style('width: 15%; text-align: center;')
+            else:
+                ui.label('Keine Benutzer gefunden.').classes('text-center text-gray-500')
+
+            # Schließen-Button in Grau
             ui.button('Schließen', on_click=dialog.close).classes(
-                'mt-4 bg-blue-500 text-white rounded-lg px-6 py-3 text-lg w-full hover:shadow-lg'
+                'mt-4 bg-blue-500 text-white rounded-md w-full hover:bg-blue-600'
             )
+
         dialog.open()
 
 
