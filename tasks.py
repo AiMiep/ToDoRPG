@@ -5,6 +5,9 @@ from user import update_user_xp_and_level
 
 
 def check_date_validation(deadline):
+    """
+    Prüft, ob sich das Datum in der Vergangenheit befindet oder ungültige Werte eingegeben wurde.
+    """
     try:
         date_obj = datetime.strptime(deadline, "%d.%m.%Y").date()
 
@@ -16,6 +19,10 @@ def check_date_validation(deadline):
 
 
 def create_new_task(difficulty, description, status, current_date, deadline, user_id):
+    """
+    Erstellt eine neue Aufgabe und speichert diese in die Datenbank
+    """
+
     database, cursor = get_database_cursor()
 
     cursor.execute('''
@@ -27,6 +34,10 @@ def create_new_task(difficulty, description, status, current_date, deadline, use
 
 
 def edit_task_attributes(user_id, task_id, description_input, deadline_input, difficulty_input, error_message):
+    """
+    Ermöglicht die Datenänderung von bestehenden Aufgaben und das Aktualisieren der Daten in der Datenbank
+    """
+
     new_description = description_input.value
     new_deadline = deadline_input.value
     new_difficulty = difficulty_input.value
@@ -67,6 +78,11 @@ def edit_task_attributes(user_id, task_id, description_input, deadline_input, di
 
 
 def update_task_status(user_id, task_id):
+    """
+    Aktualisiert den Status einer Aufgabe und vergibt Erfahrungspunkte (XP).
+    Bei jedem Statuswechsel wird die Datenbank aktualisiert.
+    """
+
     database, cursor = get_database_cursor()
 
     cursor.execute('''SELECT status, difficulty FROM tasks WHERE task_id = ? AND user_id = ?''', (task_id, user_id))
@@ -100,6 +116,9 @@ def update_task_status(user_id, task_id):
 
 
 def list_all_tasks(user_id):
+    """
+    Alle Aufgaben werden gefetched (auch abgeschlossene)
+    """
     database, cursor = get_database_cursor()
     cursor.execute('''SELECT * FROM tasks WHERE user_id = ?''', (user_id,))
     tasks = cursor.fetchall()
@@ -113,6 +132,9 @@ def list_all_tasks(user_id):
 
 
 def list_open_tasks(user_id):
+    """
+    Alle offenen Aufgaben werden gefetched
+    """
     database, cursor = get_database_cursor()
     cursor.execute('''SELECT * FROM tasks WHERE user_id = ? AND status != ?''', (user_id, 'Beendet'))
     tasks = cursor.fetchall()
@@ -125,6 +147,9 @@ def list_open_tasks(user_id):
 
 
 def list_finished_tasks(user_id):
+    """
+    Alle abgeschlossenen Aufgaben werden gefetched
+    """
     database, cursor = get_database_cursor()
     cursor.execute('''SELECT * FROM tasks WHERE user_id = ? AND status == ?''', (user_id, 'Beendet'))
     tasks = cursor.fetchall()
@@ -137,12 +162,18 @@ def list_finished_tasks(user_id):
 
 
 def delete_all_tasks(user_id):
+    """
+    Funktion ermöglicht das Löschen aller offenen Aufgaben
+    """
     database, cursor = get_database_cursor()
     cursor.execute('''DELETE FROM tasks WHERE user_id = ?''', (user_id,))
     commit_and_close(database)
 
 
 def delete_task(user_id, task_id):
+    """
+    Funktion ermöglicht das Löschen einer bestimmten Aufgaben
+    """
     database, cursor = get_database_cursor()
 
     cursor.execute('''SELECT * FROM tasks WHERE task_id = ? AND user_id = ?''', (task_id, user_id))

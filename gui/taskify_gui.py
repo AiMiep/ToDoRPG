@@ -7,6 +7,10 @@ user_id = 1
 
 @ui.page('/startpage')
 def show_startpage():
+    """
+    Erstellung der Nicegui/HTML Elemente für die Startseite.
+    """
+
     ui.add_head_html("""
     <style>
         body {
@@ -40,6 +44,12 @@ def show_startpage():
 
 
 def check_user_and_redirect():
+    """
+    Prüft, ob es bereits einen Benutzer gibt und leitet ihn entsprechend weiter.
+    Lokaler Benutzer existiert --> Homepage
+    Lokaler Benutzer existiert nicht --> Benutzererstellung
+    """
+
     database, cursor = get_database_cursor()
     cursor.execute("SELECT COUNT(*) FROM users")
 
@@ -51,6 +61,10 @@ def check_user_and_redirect():
 
 @ui.page('/homepage')
 def show_main_menu():
+    """
+    Erstellung der Nicegui/HTML Elemente für das Hauptmenü.
+    """
+
     ui.add_head_html("""
     <style>
         body {
@@ -63,11 +77,11 @@ def show_main_menu():
     </style>
     """)
 
-    ui.label('HAUPTMENÜ').style('color: white; font-size: 7vw; font-weight: bold; margin: 2vh;')
+    ui.label('HAUPTMENÜ').style('color: white; font-size: 7vw; font-weight: bold; margin: 2.5vh;')
 
     button_style = (
         'font-weight: bold; font-size: 2.7vw; border-radius: 2vh; color: black; '
-        'width: 40%; padding: 2.5vh; display: block; color: white; border: 3px solid white;'
+        'width: 40%; padding: 2.5vh; display: block; color: white; border: 3px solid white; margin-left: 3vh;'
     )
 
     ui.button('AUFGABENÜBERSICHT', color='rgba(0, 0, 0, 0.7)',
